@@ -1,3 +1,5 @@
+# NOTE: This is an AnyRoad fork of the OpenAPI Typescript Codegen library. See commit history for additions/deletions
+
 # OpenAPI Typescript Codegen
 
 [![NPM][npm-image]][npm-url]
