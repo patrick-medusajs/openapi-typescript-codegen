@@ -21,6 +21,7 @@ describe('writeClientIndex', () => {
                 model: () => 'model',
                 schema: () => 'schema',
                 service: () => 'service',
+                hook: () => 'hook',
             },
             core: {
                 settings: () => 'settings',

@@ -1,0 +1,29 @@
+{{>header}}
+
+import { hooks } from '@anyroad-libs/core';
+import { {{clientName}} } from '../../client';
+const { useQuery } = hooks;
+
+const client = new {{clientName}}();
+
+{{#each operations}}
+	export const use{{pascalCase name}} = ({{>parameters}}) => {
+		{{#equals method 'GET'}}
+	    return useQuery(['{{ camelCase service}}', '{{ camelCase name }}'], async () => {
+			return client.{{camelCase service}}.{{name}}({{#if parameters}}{
+				{{#each parameters}}
+				{{name}},
+				{{/each}}
+	    	}{{/if}});
+		{{else}}
+		return useMutation(async () => {
+			return client.{{camelCase service}}.{{name}}({{#if parameters}}{
+				{{#each parameters}}
+				{{name}},
+				{{/each}}
+			}{{/if}});
+		{{/equals}}
+	    });
+	};
+{{/each}}
+

@@ -55,6 +55,7 @@ import xhrSendRequest from '../templates/core/xhr/sendRequest.hbs';
 import templateExportModel from '../templates/exportModel.hbs';
 import templateExportSchema from '../templates/exportSchema.hbs';
 import templateExportService from '../templates/exportService.hbs';
+import templateExportHook from '../templates/exportHook.hbs';
 import templateIndex from '../templates/index.hbs';
 import partialBase from '../templates/partials/base.hbs';
 import partialExportComposition from '../templates/partials/exportComposition.hbs';
@@ -92,6 +93,7 @@ export interface Templates {
         model: Handlebars.TemplateDelegate;
         schema: Handlebars.TemplateDelegate;
         service: Handlebars.TemplateDelegate;
+        hook: Handlebars.TemplateDelegate;
     };
     core: {
         settings: Handlebars.TemplateDelegate;
@@ -124,6 +126,7 @@ export const registerHandlebarTemplates = (root: {
             model: Handlebars.template(templateExportModel),
             schema: Handlebars.template(templateExportSchema),
             service: Handlebars.template(templateExportService),
+            hook: Handlebars.template(templateExportHook),
         },
         core: {
             settings: Handlebars.template(templateCoreSettings),

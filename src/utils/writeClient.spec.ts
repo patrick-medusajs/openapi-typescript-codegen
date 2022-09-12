@@ -23,6 +23,7 @@ describe('writeClient', () => {
                 model: () => 'model',
                 schema: () => 'schema',
                 service: () => 'service',
+                hook: () => 'hook',
             },
             core: {
                 settings: () => 'settings',
@@ -43,6 +44,7 @@ describe('writeClient', () => {
             HttpClient.FETCH,
             false,
             false,
+            true,
             true,
             true,
             true,

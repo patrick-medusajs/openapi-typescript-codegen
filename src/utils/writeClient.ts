@@ -13,6 +13,7 @@ import { writeClientIndex } from './writeClientIndex';
 import { writeClientModels } from './writeClientModels';
 import { writeClientSchemas } from './writeClientSchemas';
 import { writeClientServices } from './writeClientServices';
+import { writeClientHooks } from './writeClientHooks'
 
 /**
  * Write our OpenAPI client, using the given templates at the given output
@@ -25,6 +26,7 @@ import { writeClientServices } from './writeClientServices';
  * @param exportCore Generate core client classes
  * @param exportServices Generate services
  * @param exportModels Generate models
+ * @param exportHooks Generate hooks
  * @param exportSchemas Generate schemas
  * @param exportSchemas Generate schemas
  * @param indent Indentation options (4, 2 or tab)
@@ -43,6 +45,7 @@ export const writeClient = async (
     exportCore: boolean,
     exportServices: boolean,
     exportModels: boolean,
+    exportHooks: boolean,
     exportSchemas: boolean,
     indent: Indent,
     postfixServices: string,
@@ -55,6 +58,7 @@ export const writeClient = async (
     const outputPathModels = resolve(outputPath, 'models');
     const outputPathSchemas = resolve(outputPath, 'schemas');
     const outputPathServices = resolve(outputPath, 'services');
+    const outputPathHooks = resolve(outputPath, '../hooks');
 
     if (!isSubDirectory(process.cwd(), output)) {
         throw new Error(`Output folder is not a subdirectory of the current working directory`);
@@ -80,6 +84,17 @@ export const writeClient = async (
             postfixServices,
             clientName
         );
+    }
+
+    if(exportHooks) {
+        await mkdir(outputPathHooks)
+        await writeClientHooks(
+            client.services,
+            templates,
+            outputPathHooks,
+            indent,
+            clientName
+        )
     }
 
     if (exportSchemas) {
