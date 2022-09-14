@@ -9,7 +9,7 @@ const client = new {{clientName}}();
 {{#each operations}}
 	export const use{{pascalCase name}} = ({{>parameters}}) => {
 		{{#equals method 'GET'}}
-	    return useQuery(['{{ camelCase service}}', '{{ camelCase name }}'], async () => {
+			return useQuery(['{{ camelCase service}}', '{{ camelCase name }}', {{#each parameters}}{{name}}, {{/each}}], async () => {
 			return client.{{camelCase service}}.{{name}}({{#if parameters}}{
 				{{#each parameters}}
 				{{name}},
