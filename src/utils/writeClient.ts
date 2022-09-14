@@ -92,7 +92,11 @@ export const writeClient = async (
             client.services,
             templates,
             outputPathHooks,
+            httpClient,
+            useUnionTypes,
+            useOptions,
             indent,
+            postfix,
             clientName
         )
     }
