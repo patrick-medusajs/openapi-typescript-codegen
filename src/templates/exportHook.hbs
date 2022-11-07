@@ -1,8 +1,13 @@
 {{>header}}
 
-import { hooks } from '@anyroad-libs/core';
+import { hooks } from '@anyroadcom/core';
 import { {{clientName}} } from '../../client';
-const { useQuery } = hooks;
+{{#if imports}}
+	{{#each imports}}
+		import type { {{{this}}} } from '../models/{{{this}}}';
+	{{/each}}
+{{/if}}
+const { useQuery, useMutation } = hooks;
 
 const client = new {{clientName}}();
 
