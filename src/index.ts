@@ -127,6 +127,11 @@ export const generate = async ({
 };
 
 export default {
+    Indent,
     HttpClient,
     generate,
+    writeClient,
+    parseV3,
+    postProcessClient,
+    registerHandlebarTemplates,
 };
