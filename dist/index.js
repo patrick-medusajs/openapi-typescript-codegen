@@ -4056,6 +4056,50 @@ var templateClient = {"1":function(container,depth0,helpers,partials,data) {
     + ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(lookupProperty(data,"root"),"httpClient"),"angular",{"name":"equals","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(11, data, 0),"data":data,"loc":{"start":{"line":23,"column":0},"end":{"line":80,"column":11}}})) != null ? stack1 : "");
 },"usePartial":true,"useData":true};
 
+var templateUseClient = {"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.strict, alias2=container.lambda, alias3=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return ((stack1 = container.invokePartial(lookupProperty(partials,"header"),depth0,{"name":"header","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "\nimport { createContext, useContext, ReactNode } from 'react';\nimport { QueryClientProvider, QueryClientProviderProps } from 'react-query';\nimport { "
+    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":5,"column":12},"end":{"line":5,"column":22}} ), depth0)) != null ? stack1 : "")
+    + " } from './"
+    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":5,"column":39},"end":{"line":5,"column":49}} ), depth0)) != null ? stack1 : "")
+    + "';\n\ninterface "
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":7,"column":10},"end":{"line":7,"column":37}}})) != null ? stack1 : "")
+    + "ContextState {\n	client: "
+    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":8,"column":12},"end":{"line":8,"column":22}} ), depth0)) != null ? stack1 : "")
+    + "\n}\nconst "
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":10,"column":6},"end":{"line":10,"column":33}}})) != null ? stack1 : "")
+    + "Context = createContext<"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":10,"column":57},"end":{"line":10,"column":84}}})) != null ? stack1 : "")
+    + "ContextState | null>(null)\n\nexport const use"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":12,"column":16},"end":{"line":12,"column":43}}})) != null ? stack1 : "")
+    + " = () => {\n	const context = useContext("
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":13,"column":28},"end":{"line":13,"column":55}}})) != null ? stack1 : "")
+    + "Context)\n	if (!context) {\n    	throw new Error(\"use"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":15,"column":25},"end":{"line":15,"column":52}}})) != null ? stack1 : "")
+    + " must be used within a "
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":15,"column":75},"end":{"line":15,"column":102}}})) != null ? stack1 : "")
+    + "Provider\")\n	}\n	return context\n}\n\ninterface "
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":20,"column":10},"end":{"line":20,"column":37}}})) != null ? stack1 : "")
+    + "ProviderProps {\n	baseUrl: string\n	queryClientProviderProps: QueryClientProviderProps\n	children: ReactNode\n	/**\n	* Authentication token\n	*/\n	apiKey?: string\n	/**\n	* PublishableApiKey identifier that defines the scope of resources\n	* available within the request\n	*/\n	publishableApiKey?: string\n}\n\nexport const "
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":35,"column":13},"end":{"line":35,"column":40}}})) != null ? stack1 : "")
+    + "Provider = ({\n	queryClientProviderProps,\n	baseUrl,\n	apiKey,\n	publishableApiKey,\n	children,\n}: "
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":41,"column":3},"end":{"line":41,"column":30}}})) != null ? stack1 : "")
+    + "ProviderProps) => {\n	const client = new "
+    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":42,"column":23},"end":{"line":42,"column":33}} ), depth0)) != null ? stack1 : "")
+    + "({\n		BASE: baseUrl,\n		WITH_CREDENTIALS: true,\n	})\n	return (\n		<QueryClientProvider {...queryClientProviderProps}>\n			<"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":48,"column":4},"end":{"line":48,"column":31}}})) != null ? stack1 : "")
+    + "Context.Provider value={ { client } }>\n				{children}\n			</"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":50,"column":5},"end":{"line":50,"column":32}}})) != null ? stack1 : "")
+    + "Context.Provider>\n		</QueryClientProvider>\n	)\n}";
+},"usePartial":true,"useData":true};
+
 var angularGetHeaders = {"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     return "const getHeaders = (config: OpenAPIConfig, options: ApiRequestOptions): Observable<HttpHeaders> => {\n	return forkJoin({\n		token: resolve(options, config.TOKEN),\n		username: resolve(options, config.USERNAME),\n		password: resolve(options, config.PASSWORD),\n		additionalHeaders: resolve(options, config.HEADERS),\n	}).pipe(\n		map(({ token, username, password, additionalHeaders }) => {\n			const headers = Object.entries({\n				Accept: 'application/json',\n				...additionalHeaders,\n				...options.headers,\n			})\n				.filter(([_, value]) => isDefined(value))\n				.reduce((headers, [key, value]) => ({\n					...headers,\n					[key]: String(value),\n				}), {} as Record<string, string>);\n\n			if (isStringWithValue(token)) {\n				headers['Authorization'] = `Bearer ${token}`;\n			}\n\n			if (isStringWithValue(username) && isStringWithValue(password)) {\n				const credentials = base64(`${username}:${password}`);\n				headers['Authorization'] = `Basic ${credentials}`;\n			}\n\n			if (options.body) {\n				if (options.mediaType) {\n					headers['Content-Type'] = options.mediaType;\n				} else if (isBlob(options.body)) {\n					headers['Content-Type'] = options.body.type || 'application/octet-stream';\n				} else if (isString(options.body)) {\n					headers['Content-Type'] = 'text/plain';\n				} else if (!isFormData(options.body)) {\n					headers['Content-Type'] = 'application/json';\n				}\n			}\n\n			return new HttpHeaders(headers);\n		}),\n	);\n};";
 },"useData":true};
@@ -5168,7 +5212,7 @@ var templateExportHook = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"imports"),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":6,"column":1},"end":{"line":8,"column":10}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"imports"),{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":7,"column":1},"end":{"line":9,"column":10}}})) != null ? stack1 : "");
 },"2":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.lambda;
 
@@ -5177,7 +5221,7 @@ var templateExportHook = {"1":function(container,depth0,helpers,partials,data) {
     + " } from '../models/"
     + ((stack1 = alias1(depth0, depth0)) != null ? stack1 : "")
     + "';\n";
-},"4":function(container,depth0,helpers,partials,data) {
+},"4":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5186,13 +5230,18 @@ var templateExportHook = {"1":function(container,depth0,helpers,partials,data) {
     };
 
   return "	export const use"
-    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias1,lookupProperty(depth0,"name"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":15,"column":17},"end":{"line":15,"column":36}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias1,lookupProperty(depth0,"name"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":13,"column":17},"end":{"line":13,"column":38}}})) != null ? stack1 : "")
     + " = ("
     + ((stack1 = container.invokePartial(lookupProperty(partials,"parameters"),depth0,{"name":"parameters","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + ") => {\n"
-    + ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(depth0,"method"),"GET",{"name":"equals","hash":{},"fn":container.program(5, data, 0),"inverse":container.program(11, data, 0),"data":data,"loc":{"start":{"line":16,"column":2},"end":{"line":30,"column":13}}})) != null ? stack1 : "")
-    + "	    });\n	};\n";
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parameters"),{"name":"if","hash":{},"fn":container.program(5, data, 0, blockParams, depths),"inverse":container.noop,"data":data,"loc":{"start":{"line":13,"column":57},"end":{"line":13,"column":84}}})) != null ? stack1 : "")
+    + "options = {}) => {\n		const { client } = use"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias1,lookupProperty(depths[1],"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":14,"column":24},"end":{"line":14,"column":54}}})) != null ? stack1 : "")
+    + "()\n"
+    + ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(depth0,"method"),"GET",{"name":"equals","hash":{},"fn":container.program(7, data, 0, blockParams, depths),"inverse":container.program(13, data, 0, blockParams, depths),"data":data,"loc":{"start":{"line":15,"column":2},"end":{"line":32,"column":13}}})) != null ? stack1 : "")
+    + "	};\n\n";
 },"5":function(container,depth0,helpers,partials,data) {
+    return ", ";
+},"7":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5200,25 +5249,25 @@ var templateExportHook = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return "			return useQuery(['"
-    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"service"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":17,"column":21},"end":{"line":17,"column":43}}})) != null ? stack1 : "")
+  return "			const { data, ...rest } = useQuery(['"
+    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"service"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":16,"column":40},"end":{"line":16,"column":62}}})) != null ? stack1 : "")
     + "', '"
-    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"name"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":17,"column":47},"end":{"line":17,"column":67}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"name"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":16,"column":66},"end":{"line":16,"column":86}}})) != null ? stack1 : "")
     + "', "
-    + ((stack1 = lookupProperty(helpers,"each").call(alias1,lookupProperty(depth0,"parameters"),{"name":"each","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":17,"column":70},"end":{"line":17,"column":109}}})) != null ? stack1 : "")
-    + "], async () => {\n			return client."
-    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"service"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":18,"column":17},"end":{"line":18,"column":38}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"each").call(alias1,lookupProperty(depth0,"parameters"),{"name":"each","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":16,"column":89},"end":{"line":16,"column":128}}})) != null ? stack1 : "")
+    + "], async () => {\n				return client."
+    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"service"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":17,"column":18},"end":{"line":17,"column":39}}})) != null ? stack1 : "")
     + "."
-    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":18,"column":41},"end":{"line":18,"column":45}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":17,"column":42},"end":{"line":17,"column":46}} ), depth0)) != null ? stack1 : "")
     + "("
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parameters"),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":18,"column":48},"end":{"line":22,"column":14}}})) != null ? stack1 : "")
-    + ");\n";
-},"6":function(container,depth0,helpers,partials,data) {
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parameters"),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":17,"column":49},"end":{"line":21,"column":12}}})) != null ? stack1 : "")
+    + ");\n			});\n			return { ...data, ...rest } as const\n";
+},"8":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":17,"column":92},"end":{"line":17,"column":96}} ), depth0)) != null ? stack1 : "")
+  return ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":16,"column":111},"end":{"line":16,"column":115}} ), depth0)) != null ? stack1 : "")
     + ", ";
-},"8":function(container,depth0,helpers,partials,data) {
+},"10":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5227,15 +5276,15 @@ var templateExportHook = {"1":function(container,depth0,helpers,partials,data) {
     };
 
   return "{\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parameters"),{"name":"each","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":19,"column":4},"end":{"line":21,"column":13}}})) != null ? stack1 : "")
-    + "	    	}";
-},"9":function(container,depth0,helpers,partials,data) {
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parameters"),{"name":"each","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":18,"column":5},"end":{"line":20,"column":14}}})) != null ? stack1 : "")
+    + "				}";
+},"11":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "				"
-    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":20,"column":6},"end":{"line":20,"column":10}} ), depth0)) != null ? stack1 : "")
+  return "					"
+    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":19,"column":7},"end":{"line":19,"column":11}} ), depth0)) != null ? stack1 : "")
     + ",\n";
-},"11":function(container,depth0,helpers,partials,data) {
+},"13":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5243,25 +5292,14 @@ var templateExportHook = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return "		return useMutation(async () => {\n			return client."
-    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"service"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":25,"column":17},"end":{"line":25,"column":38}}})) != null ? stack1 : "")
+  return "			return useMutation(async () => {\n				return client."
+    + ((stack1 = lookupProperty(helpers,"camelCase").call(alias1,lookupProperty(depth0,"service"),{"name":"camelCase","hash":{},"data":data,"loc":{"start":{"line":26,"column":18},"end":{"line":26,"column":39}}})) != null ? stack1 : "")
     + "."
-    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":25,"column":41},"end":{"line":25,"column":45}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":26,"column":42},"end":{"line":26,"column":46}} ), depth0)) != null ? stack1 : "")
     + "("
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parameters"),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":25,"column":48},"end":{"line":29,"column":11}}})) != null ? stack1 : "")
-    + ");\n";
-},"12":function(container,depth0,helpers,partials,data) {
-    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return "{\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parameters"),{"name":"each","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":26,"column":4},"end":{"line":28,"column":13}}})) != null ? stack1 : "")
-    + "			}";
-},"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parameters"),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":26,"column":49},"end":{"line":30,"column":12}}})) != null ? stack1 : "")
+    + ");\n			});\n";
+},"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data,blockParams,depths) {
     var stack1, alias1=container.strict, alias2=container.lambda, alias3=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5270,25 +5308,51 @@ var templateExportHook = {"1":function(container,depth0,helpers,partials,data) {
     };
 
   return ((stack1 = container.invokePartial(lookupProperty(partials,"header"),depth0,{"name":"header","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "\nimport { hooks } from '@anyroadcom/core';\nimport { "
-    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":4,"column":11},"end":{"line":4,"column":21}} ), depth0)) != null ? stack1 : "")
-    + " } from '../../client';\n"
-    + ((stack1 = lookupProperty(helpers,"if").call(alias3,lookupProperty(depth0,"imports"),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":5,"column":0},"end":{"line":9,"column":7}}})) != null ? stack1 : "")
-    + "const { useQuery, useMutation } = hooks;\n\nconst client = new "
-    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":12,"column":21},"end":{"line":12,"column":31}} ), depth0)) != null ? stack1 : "")
-    + "();\n\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(alias3,lookupProperty(depth0,"operations"),{"name":"each","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":14,"column":0},"end":{"line":33,"column":9}}})) != null ? stack1 : "");
-},"usePartial":true,"useData":true};
+    + "\nimport { useQuery, useMutation } from 'react-query';\nimport { "
+    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":4,"column":12},"end":{"line":4,"column":22}} ), depth0)) != null ? stack1 : "")
+    + " } from '../"
+    + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":4,"column":40},"end":{"line":4,"column":50}} ), depth0)) != null ? stack1 : "")
+    + "';\nimport { use"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":5,"column":12},"end":{"line":5,"column":39}}})) != null ? stack1 : "")
+    + " } from '../use"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias3,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":5,"column":54},"end":{"line":5,"column":79}}})) != null ? stack1 : "")
+    + "';\n"
+    + ((stack1 = lookupProperty(helpers,"if").call(alias3,lookupProperty(depth0,"imports"),{"name":"if","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data,"loc":{"start":{"line":6,"column":0},"end":{"line":10,"column":7}}})) != null ? stack1 : "")
+    + "\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(alias3,lookupProperty(depth0,"operations"),{"name":"each","hash":{},"fn":container.program(4, data, 0, blockParams, depths),"inverse":container.noop,"data":data,"loc":{"start":{"line":12,"column":0},"end":{"line":35,"column":9}}})) != null ? stack1 : "");
+},"usePartial":true,"useData":true,"useDepths":true};
 
 var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.strict, alias2=container.lambda;
+    var stack1, alias1=container.strict, alias2=container.lambda, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
 
   return "export { "
     + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":4,"column":12},"end":{"line":4,"column":22}} ), depth0)) != null ? stack1 : "")
     + " } from './"
     + ((stack1 = alias2(alias1(depth0, "clientName", {"start":{"line":4,"column":39},"end":{"line":4,"column":49}} ), depth0)) != null ? stack1 : "")
-    + "';\n\n";
-},"3":function(container,depth0,helpers,partials,data) {
+    + "';\n"
+    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"exportHooks"),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":5,"column":0},"end":{"line":7,"column":7}}})) != null ? stack1 : "")
+    + "\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "export { use"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias1,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":6,"column":12},"end":{"line":6,"column":39}}})) != null ? stack1 : "")
+    + ", "
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias1,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":6,"column":41},"end":{"line":6,"column":68}}})) != null ? stack1 : "")
+    + "Provider } from './use"
+    + ((stack1 = lookupProperty(helpers,"pascalCase").call(alias1,lookupProperty(depth0,"clientName"),{"name":"pascalCase","hash":{},"data":data,"loc":{"start":{"line":6,"column":90},"end":{"line":6,"column":117}}})) != null ? stack1 : "")
+    + "';\n";
+},"4":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5297,19 +5361,10 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
     };
 
   return "export { ApiError } from './core/ApiError';\n"
-    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"exportClient"),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":9,"column":0},"end":{"line":11,"column":7}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"exportClient"),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":12,"column":0},"end":{"line":14,"column":7}}})) != null ? stack1 : "")
     + "export { CancelablePromise, CancelError } from './core/CancelablePromise';\nexport { OpenAPI } from './core/OpenAPI';\nexport type { OpenAPIConfig } from './core/OpenAPI';\n";
-},"4":function(container,depth0,helpers,partials,data) {
+},"5":function(container,depth0,helpers,partials,data) {
     return "export { BaseHttpRequest } from './core/BaseHttpRequest';\n";
-},"6":function(container,depth0,helpers,partials,data) {
-    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":17,"column":0},"end":{"line":30,"column":7}}})) != null ? stack1 : "");
 },"7":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -5318,8 +5373,7 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return "\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"each","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":19,"column":0},"end":{"line":29,"column":9}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":20,"column":0},"end":{"line":33,"column":7}}})) != null ? stack1 : "");
 },"8":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -5328,21 +5382,17 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"useUnionTypes"),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.program(12, data, 0),"data":data,"loc":{"start":{"line":20,"column":0},"end":{"line":28,"column":7}}})) != null ? stack1 : "");
+  return "\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"each","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":22,"column":0},"end":{"line":32,"column":9}}})) != null ? stack1 : "");
 },"9":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.strict, alias2=container.lambda, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
         }
         return undefined
     };
 
-  return "export type { "
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":21,"column":17},"end":{"line":21,"column":21}} ), depth0)) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"postfixModels"),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":21,"column":24},"end":{"line":21,"column":97}}})) != null ? stack1 : "")
-    + " } from './models/"
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":21,"column":118},"end":{"line":21,"column":122}} ), depth0)) != null ? stack1 : "")
-    + "';\n";
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"useUnionTypes"),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.program(13, data, 0),"data":data,"loc":{"start":{"line":23,"column":0},"end":{"line":31,"column":7}}})) != null ? stack1 : "");
 },"10":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.strict, alias2=container.lambda, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -5351,10 +5401,24 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
+  return "export type { "
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":24,"column":17},"end":{"line":24,"column":21}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"postfixModels"),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":24,"column":24},"end":{"line":24,"column":97}}})) != null ? stack1 : "")
+    + " } from './models/"
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":24,"column":118},"end":{"line":24,"column":122}} ), depth0)) != null ? stack1 : "")
+    + "';\n";
+},"11":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.strict, alias2=container.lambda, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
   return " as "
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":21,"column":58},"end":{"line":21,"column":62}} ), depth0)) != null ? stack1 : "")
-    + ((stack1 = alias2(alias1(lookupProperty(data,"root"), "postfixModels", {"start":{"line":21,"column":68},"end":{"line":21,"column":87}} ), depth0)) != null ? stack1 : "");
-},"12":function(container,depth0,helpers,partials,data) {
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":24,"column":58},"end":{"line":24,"column":62}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias2(alias1(lookupProperty(data,"root"), "postfixModels", {"start":{"line":24,"column":68},"end":{"line":24,"column":87}} ), depth0)) != null ? stack1 : "");
+},"13":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5362,8 +5426,8 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"enum"),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.program(15, data, 0),"data":data,"loc":{"start":{"line":22,"column":0},"end":{"line":28,"column":0}}})) != null ? stack1 : "");
-},"13":function(container,depth0,helpers,partials,data) {
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"enum"),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.program(16, data, 0),"data":data,"loc":{"start":{"line":25,"column":0},"end":{"line":31,"column":0}}})) != null ? stack1 : "");
+},"14":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.strict, alias2=container.lambda, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5372,12 +5436,12 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
     };
 
   return "export { "
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":23,"column":12},"end":{"line":23,"column":16}} ), depth0)) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"postfixModels"),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":23,"column":19},"end":{"line":23,"column":92}}})) != null ? stack1 : "")
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":26,"column":12},"end":{"line":26,"column":16}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(lookupProperty(data,"root"),"postfixModels"),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":26,"column":19},"end":{"line":26,"column":92}}})) != null ? stack1 : "")
     + " } from './models/"
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":23,"column":113},"end":{"line":23,"column":117}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":26,"column":113},"end":{"line":26,"column":117}} ), depth0)) != null ? stack1 : "")
     + "';\n";
-},"15":function(container,depth0,helpers,partials,data) {
+},"16":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5385,16 +5449,7 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"enums"),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.program(9, data, 0),"data":data,"loc":{"start":{"line":24,"column":0},"end":{"line":28,"column":0}}})) != null ? stack1 : "");
-},"17":function(container,depth0,helpers,partials,data) {
-    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"if","hash":{},"fn":container.program(18, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":33,"column":0},"end":{"line":38,"column":7}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"enums"),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.program(10, data, 0),"data":data,"loc":{"start":{"line":27,"column":0},"end":{"line":31,"column":0}}})) != null ? stack1 : "");
 },"18":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -5403,17 +5458,8 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return "\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"each","hash":{},"fn":container.program(19, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":35,"column":0},"end":{"line":37,"column":9}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"if","hash":{},"fn":container.program(19, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":36,"column":0},"end":{"line":41,"column":7}}})) != null ? stack1 : "");
 },"19":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.strict, alias2=container.lambda;
-
-  return "export { $"
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":36,"column":13},"end":{"line":36,"column":17}} ), depth0)) != null ? stack1 : "")
-    + " } from './schemas/$"
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":36,"column":43},"end":{"line":36,"column":47}} ), depth0)) != null ? stack1 : "")
-    + "';\n";
-},"21":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5421,7 +5467,16 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"services"),{"name":"if","hash":{},"fn":container.program(22, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":41,"column":0},"end":{"line":46,"column":7}}})) != null ? stack1 : "");
+  return "\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"models"),{"name":"each","hash":{},"fn":container.program(20, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":38,"column":0},"end":{"line":40,"column":9}}})) != null ? stack1 : "");
+},"20":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.strict, alias2=container.lambda;
+
+  return "export { $"
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":39,"column":13},"end":{"line":39,"column":17}} ), depth0)) != null ? stack1 : "")
+    + " } from './schemas/$"
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":39,"column":43},"end":{"line":39,"column":47}} ), depth0)) != null ? stack1 : "")
+    + "';\n";
 },"22":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -5430,9 +5485,18 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
         return undefined
     };
 
-  return "\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"services"),{"name":"each","hash":{},"fn":container.program(23, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":43,"column":0},"end":{"line":45,"column":9}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"services"),{"name":"if","hash":{},"fn":container.program(23, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":44,"column":0},"end":{"line":49,"column":7}}})) != null ? stack1 : "");
 },"23":function(container,depth0,helpers,partials,data) {
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"services"),{"name":"each","hash":{},"fn":container.program(24, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":46,"column":0},"end":{"line":48,"column":9}}})) != null ? stack1 : "");
+},"24":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.strict, alias2=container.lambda, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -5441,11 +5505,11 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
     };
 
   return "export { "
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":44,"column":12},"end":{"line":44,"column":16}} ), depth0)) != null ? stack1 : "")
-    + ((stack1 = alias2(alias1(lookupProperty(data,"root"), "postfixServices", {"start":{"line":44,"column":22},"end":{"line":44,"column":43}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":47,"column":12},"end":{"line":47,"column":16}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias2(alias1(lookupProperty(data,"root"), "postfixServices", {"start":{"line":47,"column":22},"end":{"line":47,"column":43}} ), depth0)) != null ? stack1 : "")
     + " } from './services/"
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":44,"column":69},"end":{"line":44,"column":73}} ), depth0)) != null ? stack1 : "")
-    + ((stack1 = alias2(alias1(lookupProperty(data,"root"), "postfixServices", {"start":{"line":44,"column":79},"end":{"line":44,"column":100}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":47,"column":69},"end":{"line":47,"column":73}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias2(alias1(lookupProperty(data,"root"), "postfixServices", {"start":{"line":47,"column":79},"end":{"line":47,"column":100}} ), depth0)) != null ? stack1 : "")
     + "';\n";
 },"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -5457,11 +5521,11 @@ var templateIndex = {"1":function(container,depth0,helpers,partials,data) {
 
   return ((stack1 = container.invokePartial(lookupProperty(partials,"header"),depth0,{"name":"header","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "\n"
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportClient"),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":3,"column":0},"end":{"line":6,"column":7}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportCore"),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":7,"column":0},"end":{"line":15,"column":7}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportModels"),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":16,"column":0},"end":{"line":31,"column":7}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportSchemas"),{"name":"if","hash":{},"fn":container.program(17, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":32,"column":0},"end":{"line":39,"column":7}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportServices"),{"name":"if","hash":{},"fn":container.program(21, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":40,"column":0},"end":{"line":47,"column":7}}})) != null ? stack1 : "");
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportClient"),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":3,"column":0},"end":{"line":9,"column":7}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportCore"),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":10,"column":0},"end":{"line":18,"column":7}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportModels"),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":19,"column":0},"end":{"line":34,"column":7}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportSchemas"),{"name":"if","hash":{},"fn":container.program(18, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":35,"column":0},"end":{"line":42,"column":7}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportServices"),{"name":"if","hash":{},"fn":container.program(22, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":43,"column":0},"end":{"line":50,"column":7}}})) != null ? stack1 : "");
 },"usePartial":true,"useData":true};
 
 var partialBase = {"1":function(container,depth0,helpers,partials,data) {
@@ -7099,6 +7163,7 @@ const registerHandlebarTemplates = (root) => {
     const templates = {
         index: runtime.template(templateIndex),
         client: runtime.template(templateClient),
+        useClient: runtime.template(templateUseClient),
         exports: {
             model: runtime.template(templateExportModel),
             schema: runtime.template(templateExportSchema),
@@ -7383,16 +7448,18 @@ const writeClientHooks = async (services, templates, outputPath, httpClient, use
  * @param exportCore Generate core
  * @param exportServices Generate services
  * @param exportModels Generate models
+ * @param exportHooks Generate hooks
  * @param exportSchemas Generate schemas
  * @param postfixServices Service name postfix
  * @param postfixModels Model name postfix
  * @param clientName Custom client class name
  */
-const writeClientIndex = async (client, templates, outputPath, useUnionTypes, exportCore, exportServices, exportModels, exportSchemas, postfixServices, postfixModels, clientName) => {
+const writeClientIndex = async (client, templates, outputPath, useUnionTypes, exportCore, exportServices, exportModels, exportHooks, exportSchemas, postfixServices, postfixModels, clientName) => {
     const templateResult = templates.index({
         exportCore,
         exportServices,
         exportModels,
+        exportHooks,
         exportSchemas,
         useUnionTypes,
         postfixServices,
@@ -7477,6 +7544,31 @@ const writeClientServices = async (services, templates, outputPath, httpClient, 
 };
 
 /**
+ * Generate context for hooks.
+ * @param client Client object, containing, models, schemas and services
+ * @param templates The loaded handlebar templates
+ * @param outputPath Directory to write the generated files to
+ * @param httpClient The selected httpClient (fetch, xhr, node or axios)
+ * @param clientName Custom client class name
+ * @param indent Indentation options (4, 2 or tab)
+ * @param postfix Service name postfix
+ */
+const writeUseClient = async (client, templates, outputPath, httpClient, clientName, indent, postfix) => {
+    const templateResult = templates.useClient({
+        clientName,
+        httpClient,
+        postfix,
+        server: client.server,
+        version: client.version,
+        models: sortModelsByName(client.models),
+        services: sortServicesByName(client.services),
+        httpRequest: getHttpRequestName(httpClient),
+    });
+    const filename = `use${camelCase(clientName, { pascalCase: true })}.tsx`;
+    await writeFile(path.resolve(outputPath, filename), formatIndentation(formatCode(templateResult), indent));
+};
+
+/**
  * Write our OpenAPI client, using the given templates at the given output
  * @param client Client object with all the models, services, etc.
  * @param templates Templates wrapper with all loaded Handlebars templates
@@ -7517,6 +7609,7 @@ const writeClient = async (client, templates, output, httpClient, useOptions, us
         await writeClientServices(client.services, templates, outputPathServices, httpClient, useUnionTypes, useOptions, indent, postfixServices, clientName);
     }
     if (exportHooks) {
+        await rmdir(outputPathHooks);
         await mkdir(outputPathHooks);
         await writeClientHooks(client.services, templates, outputPathHooks, httpClient, useUnionTypes, useOptions, indent, postfixServices, clientName);
     }
@@ -7534,9 +7627,13 @@ const writeClient = async (client, templates, output, httpClient, useOptions, us
         await mkdir(outputPath);
         await writeClientClass(client, templates, outputPath, httpClient, clientName, indent, postfixServices);
     }
-    if (exportCore || exportServices || exportSchemas || exportModels) {
+    if (isDefined(clientName) && exportHooks) {
         await mkdir(outputPath);
-        await writeClientIndex(client, templates, outputPath, useUnionTypes, exportCore, exportServices, exportModels, exportSchemas, postfixServices, postfixModels, clientName);
+        await writeUseClient(client, templates, outputPath, httpClient, clientName, indent, postfixServices);
+    }
+    if (exportCore || exportServices || exportSchemas || exportModels || exportHooks) {
+        await mkdir(outputPath);
+        await writeClientIndex(client, templates, outputPath, useUnionTypes, exportCore, exportServices, exportModels, exportHooks, exportSchemas, postfixServices, postfixModels, clientName);
     }
 };
 
@@ -7553,7 +7650,7 @@ const writeClient = async (client, templates, output, httpClient, useOptions, us
  * @param exportCore Generate core client classes
  * @param exportServices Generate services
  * @param exportModels Generate models
- * @param exportModels Generate hooks
+ * @param exportHooks Generate hooks
  * @param exportSchemas Generate schemas
  * @param indent Indentation options (4, 2 or tab)
  * @param postfixServices Service name postfix
