@@ -1,3 +1,5 @@
+# Note: Customized fork for Medusa.
+
 # OpenAPI Typescript Codegen
 
 [![NPM][npm-image]][npm-url]

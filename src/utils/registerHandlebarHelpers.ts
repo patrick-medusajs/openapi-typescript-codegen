@@ -1,4 +1,5 @@
 import camelCase from 'camelcase';
+import pascalCase from 'pascalcase';
 import Handlebars from 'handlebars/runtime';
 import { EOL } from 'os';
 
@@ -103,5 +104,9 @@ export const registerHandlebarHelpers = (root: {
 
     Handlebars.registerHelper('camelCase', function (value: string): string {
         return camelCase(value);
+    });
+
+    Handlebars.registerHelper('pascalCase', function (value: string): string {
+        return pascalCase(value);
     });
 };

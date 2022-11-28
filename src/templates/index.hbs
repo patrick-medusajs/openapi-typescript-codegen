@@ -2,6 +2,9 @@
 
 {{#if @root.exportClient}}
 export { {{{clientName}}} } from './{{{clientName}}}';
+{{#if @root.exportHooks}}
+export { use{{{pascalCase clientName}}}, {{{pascalCase clientName}}}Provider } from './use{{{pascalCase clientName}}}';
+{{/if}}
 
 {{/if}}
 {{#if @root.exportCore}}

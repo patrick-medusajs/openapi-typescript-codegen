@@ -1,0 +1,36 @@
+{{>header}}
+
+import { useQuery, useMutation } from 'react-query';
+import { {{{clientName}}} } from '../{{{clientName}}}';
+import { use{{{pascalCase clientName}}} } from '../use{{pascalCase clientName}}';
+{{#if imports}}
+	{{#each imports}}
+		import type { {{{this}}} } from '../models/{{{this}}}';
+	{{/each}}
+{{/if}}
+
+{{#each operations}}
+	export const use{{{pascalCase name}}} = ({{>parameters}}{{#if parameters}}, {{/if}}options = {}) => {
+		const { client } = use{{{pascalCase ../clientName}}}()
+		{{#equals method 'GET'}}
+			const { data, ...rest } = useQuery(['{{ camelCase service}}', '{{ camelCase name }}', {{#each parameters}}{{name}}, {{/each}}], async () => {
+				return client.{{camelCase service}}.{{name}}({{#if parameters}}{
+					{{#each parameters}}
+					{{name}},
+					{{/each}}
+				}{{/if}});
+			});
+			return { ...data, ...rest } as const
+		{{else}}
+			return useMutation(async () => {
+				return client.{{camelCase service}}.{{name}}({{#if parameters}}{
+					{{#each parameters}}
+					{{name}},
+					{{/each}}
+				}{{/if}});
+			});
+		{{/equals}}
+	};
+
+{{/each}}
+

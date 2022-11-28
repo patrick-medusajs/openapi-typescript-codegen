@@ -2,6 +2,7 @@ import Handlebars from 'handlebars/runtime';
 
 import { HttpClient } from '../HttpClient';
 import templateClient from '../templates/client.hbs';
+import templateUseClient from '../templates/useClient.hbs';
 import angularGetHeaders from '../templates/core/angular/getHeaders.hbs';
 import angularGetRequestBody from '../templates/core/angular/getRequestBody.hbs';
 import angularGetResponseBody from '../templates/core/angular/getResponseBody.hbs';
@@ -55,6 +56,7 @@ import xhrSendRequest from '../templates/core/xhr/sendRequest.hbs';
 import templateExportModel from '../templates/exportModel.hbs';
 import templateExportSchema from '../templates/exportSchema.hbs';
 import templateExportService from '../templates/exportService.hbs';
+import templateExportHook from '../templates/exportHook.hbs';
 import templateIndex from '../templates/index.hbs';
 import partialBase from '../templates/partials/base.hbs';
 import partialExportComposition from '../templates/partials/exportComposition.hbs';
@@ -88,10 +90,12 @@ import { registerHandlebarHelpers } from './registerHandlebarHelpers';
 export interface Templates {
     index: Handlebars.TemplateDelegate;
     client: Handlebars.TemplateDelegate;
+    useClient: Handlebars.TemplateDelegate;
     exports: {
         model: Handlebars.TemplateDelegate;
         schema: Handlebars.TemplateDelegate;
         service: Handlebars.TemplateDelegate;
+        hook: Handlebars.TemplateDelegate;
     };
     core: {
         settings: Handlebars.TemplateDelegate;
@@ -120,10 +124,12 @@ export const registerHandlebarTemplates = (root: {
     const templates: Templates = {
         index: Handlebars.template(templateIndex),
         client: Handlebars.template(templateClient),
+        useClient: Handlebars.template(templateUseClient),
         exports: {
             model: Handlebars.template(templateExportModel),
             schema: Handlebars.template(templateExportSchema),
             service: Handlebars.template(templateExportService),
+            hook: Handlebars.template(templateExportHook),
         },
         core: {
             settings: Handlebars.template(templateCoreSettings),

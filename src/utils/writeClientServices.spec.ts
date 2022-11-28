@@ -22,10 +22,12 @@ describe('writeClientServices', () => {
         const templates: Templates = {
             index: () => 'index',
             client: () => 'client',
+            useClient: () => 'useClient',
             exports: {
                 model: () => 'model',
                 schema: () => 'schema',
                 service: () => 'service',
+                hook: () => 'hook',
             },
             core: {
                 settings: () => 'settings',

@@ -9,10 +9,12 @@ import { isSubDirectory } from './isSubdirectory';
 import type { Templates } from './registerHandlebarTemplates';
 import { writeClientClass } from './writeClientClass';
 import { writeClientCore } from './writeClientCore';
+import { writeClientHooks } from './writeClientHooks';
 import { writeClientIndex } from './writeClientIndex';
 import { writeClientModels } from './writeClientModels';
 import { writeClientSchemas } from './writeClientSchemas';
 import { writeClientServices } from './writeClientServices';
+import { writeUseClient } from './writeUseClient';
 
 /**
  * Write our OpenAPI client, using the given templates at the given output
@@ -25,6 +27,7 @@ import { writeClientServices } from './writeClientServices';
  * @param exportCore Generate core client classes
  * @param exportServices Generate services
  * @param exportModels Generate models
+ * @param exportHooks Generate hooks
  * @param exportSchemas Generate schemas
  * @param exportSchemas Generate schemas
  * @param indent Indentation options (4, 2 or tab)
@@ -43,6 +46,7 @@ export const writeClient = async (
     exportCore: boolean,
     exportServices: boolean,
     exportModels: boolean,
+    exportHooks: boolean,
     exportSchemas: boolean,
     indent: Indent,
     postfixServices: string,
@@ -55,6 +59,7 @@ export const writeClient = async (
     const outputPathModels = resolve(outputPath, 'models');
     const outputPathSchemas = resolve(outputPath, 'schemas');
     const outputPathServices = resolve(outputPath, 'services');
+    const outputPathHooks = resolve(outputPath, 'hooks');
 
     if (!isSubDirectory(process.cwd(), output)) {
         throw new Error(`Output folder is not a subdirectory of the current working directory`);
@@ -82,6 +87,22 @@ export const writeClient = async (
         );
     }
 
+    if (exportHooks) {
+        await rmdir(outputPathHooks);
+        await mkdir(outputPathHooks);
+        await writeClientHooks(
+            client.services,
+            templates,
+            outputPathHooks,
+            httpClient,
+            useUnionTypes,
+            useOptions,
+            indent,
+            postfixServices,
+            clientName
+        );
+    }
+
     if (exportSchemas) {
         await rmdir(outputPathSchemas);
         await mkdir(outputPathSchemas);
@@ -98,8 +119,12 @@ export const writeClient = async (
         await mkdir(outputPath);
         await writeClientClass(client, templates, outputPath, httpClient, clientName, indent, postfixServices);
     }
+    if (isDefined(clientName) && exportHooks) {
+        await mkdir(outputPath);
+        await writeUseClient(client, templates, outputPath, httpClient, clientName, indent, postfixServices);
+    }
 
-    if (exportCore || exportServices || exportSchemas || exportModels) {
+    if (exportCore || exportServices || exportSchemas || exportModels || exportHooks) {
         await mkdir(outputPath);
         await writeClientIndex(
             client,
@@ -109,6 +134,7 @@ export const writeClient = async (
             exportCore,
             exportServices,
             exportModels,
+            exportHooks,
             exportSchemas,
             postfixServices,
             postfixModels,

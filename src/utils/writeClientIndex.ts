@@ -18,6 +18,7 @@ import { sortServicesByName } from './sortServicesByName';
  * @param exportCore Generate core
  * @param exportServices Generate services
  * @param exportModels Generate models
+ * @param exportHooks Generate hooks
  * @param exportSchemas Generate schemas
  * @param postfixServices Service name postfix
  * @param postfixModels Model name postfix
@@ -31,6 +32,7 @@ export const writeClientIndex = async (
     exportCore: boolean,
     exportServices: boolean,
     exportModels: boolean,
+    exportHooks: boolean,
     exportSchemas: boolean,
     postfixServices: string,
     postfixModels: string,
@@ -40,6 +42,7 @@ export const writeClientIndex = async (
         exportCore,
         exportServices,
         exportModels,
+        exportHooks,
         exportSchemas,
         useUnionTypes,
         postfixServices,
