@@ -67,17 +67,6 @@
         "pascalcase": "^2.0.0"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "14.2.7",
-        "@angular/animations": "14.2.8",
-        "@angular/cli": "14.2.7",
-        "@angular/common": "14.2.8",
-        "@angular/compiler": "14.2.8",
-        "@angular/compiler-cli": "14.2.8",
-        "@angular/core": "14.2.8",
-        "@angular/forms": "14.2.8",
-        "@angular/platform-browser": "14.2.8",
-        "@angular/platform-browser-dynamic": "14.2.8",
-        "@angular/router": "14.2.8",
         "@babel/cli": "7.19.3",
         "@babel/core": "7.20.2",
         "@babel/preset-env": "7.20.2",
