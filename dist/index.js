@@ -23,19 +23,6 @@ exports.Indent = void 0;
     Indent["TAB"] = "tab";
 })(exports.Indent || (exports.Indent = {}));
 
-const reservedWords$1 = /^(arguments|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|function|if|implements|import|in|instanceof|interface|let|new|null|package|private|protected|public|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)$/g;
-/**
- * Replaces any invalid characters from a parameter name.
- * For example: 'filter.someProperty' becomes 'filterSomeProperty'.
- */
-const getOperationParameterName$1 = (value) => {
-    const clean = value
-        .replace(/^[^a-zA-Z]+/g, '')
-        .replace(/[^\w\-]+/g, '-')
-        .trim();
-    return camelCase(clean).replace(reservedWords$1, '_$1');
-};
-
 /**
  * The spec generates a pattern like this '^\d{3}-\d{2}-\d{4}$'
  * However, to use it in HTML or inside new RegExp() we need to
@@ -53,1091 +40,6 @@ const getPattern = (pattern) => {
 
 const isString = (val) => {
     return typeof val === 'string';
-};
-
-/**
- * Extend the enum with the x-enum properties. This adds the capability
- * to use names and descriptions inside the generated enums.
- * @param enumerators
- * @param definition
- */
-const extendEnum$1 = (enumerators, definition) => {
-    var _a, _b;
-    const names = (_a = definition['x-enum-varnames']) === null || _a === void 0 ? void 0 : _a.filter(isString);
-    const descriptions = (_b = definition['x-enum-descriptions']) === null || _b === void 0 ? void 0 : _b.filter(isString);
-    return enumerators.map((enumerator, index) => ({
-        name: (names === null || names === void 0 ? void 0 : names[index]) || enumerator.name,
-        description: (descriptions === null || descriptions === void 0 ? void 0 : descriptions[index]) || enumerator.description,
-        value: enumerator.value,
-        type: enumerator.type,
-    }));
-};
-
-const getEnum$1 = (values) => {
-    if (Array.isArray(values)) {
-        return values
-            .filter((value, index, arr) => {
-            return arr.indexOf(value) === index;
-        })
-            .filter((value) => {
-            return typeof value === 'number' || typeof value === 'string';
-        })
-            .map(value => {
-            if (typeof value === 'number') {
-                return {
-                    name: `'_${value}'`,
-                    value: String(value),
-                    type: 'number',
-                    description: null,
-                };
-            }
-            return {
-                name: String(value)
-                    .replace(/\W+/g, '_')
-                    .replace(/^(\d+)/g, '_$1')
-                    .replace(/([a-z])([A-Z]+)/g, '$1_$2')
-                    .toUpperCase(),
-                value: `'${value.replace(/'/g, "\\'")}'`,
-                type: 'string',
-                description: null,
-            };
-        });
-    }
-    return [];
-};
-
-const escapeName$1 = (value) => {
-    if (value || value === '') {
-        const validName = /^[a-zA-Z_$][\w$]+$/g.test(value);
-        if (!validName) {
-            return `'${value}'`;
-        }
-    }
-    return value;
-};
-
-const TYPE_MAPPINGS$1 = new Map([
-    ['file', 'binary'],
-    ['any', 'any'],
-    ['object', 'any'],
-    ['array', 'any[]'],
-    ['boolean', 'boolean'],
-    ['byte', 'number'],
-    ['int', 'number'],
-    ['integer', 'number'],
-    ['float', 'number'],
-    ['double', 'number'],
-    ['short', 'number'],
-    ['long', 'number'],
-    ['number', 'number'],
-    ['char', 'string'],
-    ['date', 'string'],
-    ['date-time', 'string'],
-    ['password', 'string'],
-    ['string', 'string'],
-    ['void', 'void'],
-    ['null', 'null'],
-]);
-/**
- * Get mapped type for given type to any basic Typescript/Javascript type.
- */
-const getMappedType$1 = (type, format) => {
-    if (format === 'binary') {
-        return 'binary';
-    }
-    return TYPE_MAPPINGS$1.get(type);
-};
-
-/**
- * Strip (OpenAPI) namespaces fom values.
- * @param value
- */
-const stripNamespace$1 = (value) => {
-    return value
-        .trim()
-        .replace(/^#\/definitions\//, '')
-        .replace(/^#\/parameters\//, '')
-        .replace(/^#\/responses\//, '')
-        .replace(/^#\/securityDefinitions\//, '');
-};
-
-const encode$1 = (value) => {
-    return value.replace(/^[^a-zA-Z_$]+/g, '').replace(/[^\w$]+/g, '_');
-};
-/**
- * Parse any string value into a type object.
- * @param type String value like "integer" or "Link[Model]".
- * @param format String value like "binary" or "date".
- */
-const getType$1 = (type = 'any', format) => {
-    const result = {
-        type: 'any',
-        base: 'any',
-        template: null,
-        imports: [],
-        isNullable: false,
-    };
-    const mapped = getMappedType$1(type, format);
-    if (mapped) {
-        result.type = mapped;
-        result.base = mapped;
-        return result;
-    }
-    const typeWithoutNamespace = decodeURIComponent(stripNamespace$1(type));
-    if (/\[.*\]$/g.test(typeWithoutNamespace)) {
-        const matches = typeWithoutNamespace.match(/(.*?)\[(.*)\]$/);
-        if (matches === null || matches === void 0 ? void 0 : matches.length) {
-            const match1 = getType$1(encode$1(matches[1]));
-            const match2 = getType$1(encode$1(matches[2]));
-            if (match1.type === 'any[]') {
-                result.type = `${match2.type}[]`;
-                result.base = match2.type;
-                match1.imports = [];
-            }
-            else if (match2.type) {
-                result.type = `${match1.type}<${match2.type}>`;
-                result.base = match1.type;
-                result.template = match2.type;
-            }
-            else {
-                result.type = match1.type;
-                result.base = match1.type;
-                result.template = match1.type;
-            }
-            result.imports.push(...match1.imports);
-            result.imports.push(...match2.imports);
-            return result;
-        }
-    }
-    if (typeWithoutNamespace) {
-        const type = encode$1(typeWithoutNamespace);
-        result.type = type;
-        result.base = type;
-        result.imports.push(type);
-        return result;
-    }
-    return result;
-};
-
-const getModelProperties$1 = (openApi, definition, getModel) => {
-    var _a;
-    const models = [];
-    for (const propertyName in definition.properties) {
-        if (definition.properties.hasOwnProperty(propertyName)) {
-            const property = definition.properties[propertyName];
-            const propertyRequired = !!((_a = definition.required) === null || _a === void 0 ? void 0 : _a.includes(propertyName));
-            if (property.$ref) {
-                const model = getType$1(property.$ref);
-                models.push({
-                    name: escapeName$1(propertyName),
-                    export: 'reference',
-                    type: model.type,
-                    base: model.base,
-                    template: model.template,
-                    link: null,
-                    description: property.description || null,
-                    isDefinition: false,
-                    isReadOnly: property.readOnly === true,
-                    isRequired: propertyRequired,
-                    isNullable: property['x-nullable'] === true,
-                    format: property.format,
-                    maximum: property.maximum,
-                    exclusiveMaximum: property.exclusiveMaximum,
-                    minimum: property.minimum,
-                    exclusiveMinimum: property.exclusiveMinimum,
-                    multipleOf: property.multipleOf,
-                    maxLength: property.maxLength,
-                    minLength: property.minLength,
-                    maxItems: property.maxItems,
-                    minItems: property.minItems,
-                    uniqueItems: property.uniqueItems,
-                    maxProperties: property.maxProperties,
-                    minProperties: property.minProperties,
-                    pattern: getPattern(property.pattern),
-                    imports: model.imports,
-                    enum: [],
-                    enums: [],
-                    properties: [],
-                });
-            }
-            else {
-                const model = getModel(openApi, property);
-                models.push({
-                    name: escapeName$1(propertyName),
-                    export: model.export,
-                    type: model.type,
-                    base: model.base,
-                    template: model.template,
-                    link: model.link,
-                    description: property.description || null,
-                    isDefinition: false,
-                    isReadOnly: property.readOnly === true,
-                    isRequired: propertyRequired,
-                    isNullable: property['x-nullable'] === true,
-                    format: property.format,
-                    maximum: property.maximum,
-                    exclusiveMaximum: property.exclusiveMaximum,
-                    minimum: property.minimum,
-                    exclusiveMinimum: property.exclusiveMinimum,
-                    multipleOf: property.multipleOf,
-                    maxLength: property.maxLength,
-                    minLength: property.minLength,
-                    maxItems: property.maxItems,
-                    minItems: property.minItems,
-                    uniqueItems: property.uniqueItems,
-                    maxProperties: property.maxProperties,
-                    minProperties: property.minProperties,
-                    pattern: getPattern(property.pattern),
-                    imports: model.imports,
-                    enum: model.enum,
-                    enums: model.enums,
-                    properties: model.properties,
-                });
-            }
-        }
-    }
-    return models;
-};
-
-const ESCAPED_REF_SLASH$1 = /~1/g;
-const ESCAPED_REF_TILDE$1 = /~0/g;
-const getRef$1 = (openApi, item) => {
-    if (item.$ref) {
-        // Fetch the paths to the definitions, this converts:
-        // "#/definitions/Form" to ["definitions", "Form"]
-        const paths = item.$ref
-            .replace(/^#/g, '')
-            .split('/')
-            .filter(item => item);
-        // Try to find the reference by walking down the path,
-        // if we cannot find it, then we throw an error.
-        let result = openApi;
-        paths.forEach(path => {
-            const decodedPath = decodeURIComponent(path.replace(ESCAPED_REF_SLASH$1, '/').replace(ESCAPED_REF_TILDE$1, '~'));
-            if (result.hasOwnProperty(decodedPath)) {
-                result = result[decodedPath];
-            }
-            else {
-                throw new Error(`Could not find reference: "${item.$ref}"`);
-            }
-        });
-        return result;
-    }
-    return item;
-};
-
-const getRequiredPropertiesFromComposition$1 = (openApi, required, definitions, getModel) => {
-    return definitions
-        .reduce((properties, definition) => {
-        if (definition.$ref) {
-            const schema = getRef$1(openApi, definition);
-            return [...properties, ...getModel(openApi, schema).properties];
-        }
-        return [...properties, ...getModel(openApi, definition).properties];
-    }, [])
-        .filter(property => {
-        return !property.isRequired && required.includes(property.name);
-    })
-        .map(property => {
-        return {
-            ...property,
-            isRequired: true,
-        };
-    });
-};
-
-const getModelComposition$1 = (openApi, definition, definitions, type, getModel) => {
-    const composition = {
-        type,
-        imports: [],
-        enums: [],
-        properties: [],
-    };
-    const properties = [];
-    definitions
-        .map(definition => getModel(openApi, definition))
-        .filter(model => {
-        const hasProperties = model.properties.length;
-        const hasEnums = model.enums.length;
-        const isObject = model.type === 'any';
-        const isEmpty = isObject && !hasProperties && !hasEnums;
-        return !isEmpty;
-    })
-        .forEach(model => {
-        composition.imports.push(...model.imports);
-        composition.enums.push(...model.enums);
-        composition.properties.push(model);
-    });
-    if (definition.required) {
-        const requiredProperties = getRequiredPropertiesFromComposition$1(openApi, definition.required, definitions, getModel);
-        requiredProperties.forEach(requiredProperty => {
-            composition.imports.push(...requiredProperty.imports);
-            composition.enums.push(...requiredProperty.enums);
-        });
-        properties.push(...requiredProperties);
-    }
-    if (definition.properties) {
-        const modelProperties = getModelProperties$1(openApi, definition, getModel);
-        modelProperties.forEach(modelProperty => {
-            composition.imports.push(...modelProperty.imports);
-            composition.enums.push(...modelProperty.enums);
-            if (modelProperty.export === 'enum') {
-                composition.enums.push(modelProperty);
-            }
-        });
-        properties.push(...modelProperties);
-    }
-    if (properties.length) {
-        composition.properties.push({
-            name: 'properties',
-            export: 'interface',
-            type: 'any',
-            base: 'any',
-            template: null,
-            link: null,
-            description: '',
-            isDefinition: false,
-            isReadOnly: false,
-            isNullable: false,
-            isRequired: false,
-            imports: [],
-            enum: [],
-            enums: [],
-            properties,
-        });
-    }
-    return composition;
-};
-
-const getModel$1 = (openApi, definition, isDefinition = false, name = '') => {
-    var _a;
-    const model = {
-        name,
-        export: 'interface',
-        type: 'any',
-        base: 'any',
-        template: null,
-        link: null,
-        description: definition.description || null,
-        isDefinition,
-        isReadOnly: definition.readOnly === true,
-        isNullable: definition['x-nullable'] === true,
-        isRequired: false,
-        format: definition.format,
-        maximum: definition.maximum,
-        exclusiveMaximum: definition.exclusiveMaximum,
-        minimum: definition.minimum,
-        exclusiveMinimum: definition.exclusiveMinimum,
-        multipleOf: definition.multipleOf,
-        maxLength: definition.maxLength,
-        minLength: definition.minLength,
-        maxItems: definition.maxItems,
-        minItems: definition.minItems,
-        uniqueItems: definition.uniqueItems,
-        maxProperties: definition.maxProperties,
-        minProperties: definition.minProperties,
-        pattern: getPattern(definition.pattern),
-        imports: [],
-        enum: [],
-        enums: [],
-        properties: [],
-    };
-    if (definition.$ref) {
-        const definitionRef = getType$1(definition.$ref);
-        model.export = 'reference';
-        model.type = definitionRef.type;
-        model.base = definitionRef.base;
-        model.template = definitionRef.template;
-        model.imports.push(...definitionRef.imports);
-        return model;
-    }
-    if (definition.enum && definition.type !== 'boolean') {
-        const enumerators = getEnum$1(definition.enum);
-        const extendedEnumerators = extendEnum$1(enumerators, definition);
-        if (extendedEnumerators.length) {
-            model.export = 'enum';
-            model.type = 'string';
-            model.base = 'string';
-            model.enum.push(...extendedEnumerators);
-            return model;
-        }
-    }
-    if (definition.type === 'array' && definition.items) {
-        if (definition.items.$ref) {
-            const arrayItems = getType$1(definition.items.$ref);
-            model.export = 'array';
-            model.type = arrayItems.type;
-            model.base = arrayItems.base;
-            model.template = arrayItems.template;
-            model.imports.push(...arrayItems.imports);
-            return model;
-        }
-        else {
-            const arrayItems = getModel$1(openApi, definition.items);
-            model.export = 'array';
-            model.type = arrayItems.type;
-            model.base = arrayItems.base;
-            model.template = arrayItems.template;
-            model.link = arrayItems;
-            model.imports.push(...arrayItems.imports);
-            return model;
-        }
-    }
-    if (definition.type === 'object' && typeof definition.additionalProperties === 'object') {
-        if (definition.additionalProperties.$ref) {
-            const additionalProperties = getType$1(definition.additionalProperties.$ref);
-            model.export = 'dictionary';
-            model.type = additionalProperties.type;
-            model.base = additionalProperties.base;
-            model.template = additionalProperties.template;
-            model.imports.push(...additionalProperties.imports);
-            return model;
-        }
-        else {
-            const additionalProperties = getModel$1(openApi, definition.additionalProperties);
-            model.export = 'dictionary';
-            model.type = additionalProperties.type;
-            model.base = additionalProperties.base;
-            model.template = additionalProperties.template;
-            model.link = additionalProperties;
-            model.imports.push(...additionalProperties.imports);
-            return model;
-        }
-    }
-    if ((_a = definition.allOf) === null || _a === void 0 ? void 0 : _a.length) {
-        const composition = getModelComposition$1(openApi, definition, definition.allOf, 'all-of', getModel$1);
-        model.export = composition.type;
-        model.imports.push(...composition.imports);
-        model.properties.push(...composition.properties);
-        model.enums.push(...composition.enums);
-        return model;
-    }
-    if (definition.type === 'object') {
-        model.export = 'interface';
-        model.type = 'any';
-        model.base = 'any';
-        if (definition.properties) {
-            const modelProperties = getModelProperties$1(openApi, definition, getModel$1);
-            modelProperties.forEach(modelProperty => {
-                model.imports.push(...modelProperty.imports);
-                model.enums.push(...modelProperty.enums);
-                model.properties.push(modelProperty);
-                if (modelProperty.export === 'enum') {
-                    model.enums.push(modelProperty);
-                }
-            });
-        }
-        return model;
-    }
-    // If the schema has a type than it can be a basic or generic type.
-    if (definition.type) {
-        const definitionType = getType$1(definition.type, definition.format);
-        model.export = 'generic';
-        model.type = definitionType.type;
-        model.base = definitionType.base;
-        model.template = definitionType.template;
-        model.imports.push(...definitionType.imports);
-        return model;
-    }
-    return model;
-};
-
-const getModels$1 = (openApi) => {
-    const models = [];
-    for (const definitionName in openApi.definitions) {
-        if (openApi.definitions.hasOwnProperty(definitionName)) {
-            const definition = openApi.definitions[definitionName];
-            const definitionType = getType$1(definitionName);
-            const model = getModel$1(openApi, definition, true, definitionType.base.replace(reservedWords$1, '_$1'));
-            models.push(model);
-        }
-    }
-    return models;
-};
-
-/**
- * Get the base server url.
- * @param openApi
- */
-const getServer$1 = (openApi) => {
-    var _a;
-    const scheme = ((_a = openApi.schemes) === null || _a === void 0 ? void 0 : _a[0]) || 'http';
-    const host = openApi.host;
-    const basePath = openApi.basePath || '';
-    const url = host ? `${scheme}://${host}${basePath}` : basePath;
-    return url.replace(/\/$/g, '');
-};
-
-const unique = (val, index, arr) => {
-    return arr.indexOf(val) === index;
-};
-
-/**
- *
- * @param operationResponses
- */
-const getOperationErrors$1 = (operationResponses) => {
-    return operationResponses
-        .filter(operationResponse => {
-        return operationResponse.code >= 300 && operationResponse.description;
-    })
-        .map(response => ({
-        code: response.code,
-        description: response.description,
-    }));
-};
-
-/**
- * Convert the input value to a correct operation (method) classname.
- * This will use the operation ID - if available - and otherwise fallback
- * on a generated name from the URL
- */
-const getOperationName$1 = (url, method, operationId) => {
-    if (operationId) {
-        return camelCase(operationId
-            .replace(/^[^a-zA-Z]+/g, '')
-            .replace(/[^\w\-]+/g, '-')
-            .trim());
-    }
-    const urlWithoutPlaceholders = url
-        .replace(/[^/]*?{api-version}.*?\//g, '')
-        .replace(/{(.*?)}/g, '')
-        .replace(/\//g, '-');
-    return camelCase(`${method}-${urlWithoutPlaceholders}`);
-};
-
-const getOperationParameterDefault = (parameter, operationParameter) => {
-    var _a;
-    if (parameter.default === undefined) {
-        return undefined;
-    }
-    if (parameter.default === null) {
-        return 'null';
-    }
-    const type = parameter.type || typeof parameter.default;
-    switch (type) {
-        case 'int':
-        case 'integer':
-        case 'number':
-            if (operationParameter.export === 'enum' && ((_a = operationParameter.enum) === null || _a === void 0 ? void 0 : _a[parameter.default])) {
-                return operationParameter.enum[parameter.default].value;
-            }
-            return parameter.default;
-        case 'boolean':
-            return JSON.stringify(parameter.default);
-        case 'string':
-            return `'${parameter.default}'`;
-        case 'object':
-            try {
-                return JSON.stringify(parameter.default, null, 4);
-            }
-            catch (e) {
-                // Ignore
-            }
-    }
-    return undefined;
-};
-
-const reservedWords = /^(arguments|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|function|if|implements|import|in|instanceof|interface|let|new|null|package|private|protected|public|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)$/g;
-/**
- * Replaces any invalid characters from a parameter name.
- * For example: 'filter.someProperty' becomes 'filterSomeProperty'.
- */
-const getOperationParameterName = (value) => {
-    const clean = value
-        .replace(/^[^a-zA-Z]+/g, '')
-        .replace(/[^\w\-]+/g, '-')
-        .trim();
-    return camelCase(clean).replace(reservedWords, '_$1');
-};
-
-const getOperationParameter$1 = (openApi, parameter) => {
-    var _a;
-    const operationParameter = {
-        in: parameter.in,
-        prop: parameter.name,
-        export: 'interface',
-        name: getOperationParameterName(parameter.name),
-        type: 'any',
-        base: 'any',
-        template: null,
-        link: null,
-        description: parameter.description || null,
-        isDefinition: false,
-        isReadOnly: false,
-        isRequired: parameter.required === true,
-        isNullable: parameter['x-nullable'] === true,
-        format: parameter.format,
-        maximum: parameter.maximum,
-        exclusiveMaximum: parameter.exclusiveMaximum,
-        minimum: parameter.minimum,
-        exclusiveMinimum: parameter.exclusiveMinimum,
-        multipleOf: parameter.multipleOf,
-        maxLength: parameter.maxLength,
-        minLength: parameter.minLength,
-        maxItems: parameter.maxItems,
-        minItems: parameter.minItems,
-        uniqueItems: parameter.uniqueItems,
-        pattern: getPattern(parameter.pattern),
-        imports: [],
-        enum: [],
-        enums: [],
-        properties: [],
-        mediaType: null,
-    };
-    if (parameter.$ref) {
-        const definitionRef = getType$1(parameter.$ref);
-        operationParameter.export = 'reference';
-        operationParameter.type = definitionRef.type;
-        operationParameter.base = definitionRef.base;
-        operationParameter.template = definitionRef.template;
-        operationParameter.imports.push(...definitionRef.imports);
-        operationParameter.default = getOperationParameterDefault(parameter, operationParameter);
-        return operationParameter;
-    }
-    if (parameter.enum) {
-        const enumerators = getEnum$1(parameter.enum);
-        const extendedEnumerators = extendEnum$1(enumerators, parameter);
-        if (extendedEnumerators.length) {
-            operationParameter.export = 'enum';
-            operationParameter.type = 'string';
-            operationParameter.base = 'string';
-            operationParameter.enum.push(...extendedEnumerators);
-            operationParameter.default = getOperationParameterDefault(parameter, operationParameter);
-            return operationParameter;
-        }
-    }
-    if (parameter.type === 'array' && parameter.items) {
-        const items = getType$1(parameter.items.type, parameter.items.format);
-        operationParameter.export = 'array';
-        operationParameter.type = items.type;
-        operationParameter.base = items.base;
-        operationParameter.template = items.template;
-        operationParameter.imports.push(...items.imports);
-        operationParameter.default = getOperationParameterDefault(parameter, operationParameter);
-        return operationParameter;
-    }
-    if (parameter.type === 'object' && parameter.items) {
-        const items = getType$1(parameter.items.type, parameter.items.format);
-        operationParameter.export = 'dictionary';
-        operationParameter.type = items.type;
-        operationParameter.base = items.base;
-        operationParameter.template = items.template;
-        operationParameter.imports.push(...items.imports);
-        operationParameter.default = getOperationParameterDefault(parameter, operationParameter);
-        return operationParameter;
-    }
-    let schema = parameter.schema;
-    if (schema) {
-        if ((_a = schema.$ref) === null || _a === void 0 ? void 0 : _a.startsWith('#/parameters/')) {
-            schema = getRef$1(openApi, schema);
-        }
-        if (schema.$ref) {
-            const model = getType$1(schema.$ref);
-            operationParameter.export = 'reference';
-            operationParameter.type = model.type;
-            operationParameter.base = model.base;
-            operationParameter.template = model.template;
-            operationParameter.imports.push(...model.imports);
-            operationParameter.default = getOperationParameterDefault(parameter, operationParameter);
-            return operationParameter;
-        }
-        else {
-            const model = getModel$1(openApi, schema);
-            operationParameter.export = model.export;
-            operationParameter.type = model.type;
-            operationParameter.base = model.base;
-            operationParameter.template = model.template;
-            operationParameter.link = model.link;
-            operationParameter.imports.push(...model.imports);
-            operationParameter.enum.push(...model.enum);
-            operationParameter.enums.push(...model.enums);
-            operationParameter.properties.push(...model.properties);
-            operationParameter.default = getOperationParameterDefault(parameter, operationParameter);
-            return operationParameter;
-        }
-    }
-    // If the parameter has a type than it can be a basic or generic type.
-    if (parameter.type) {
-        const definitionType = getType$1(parameter.type, parameter.format);
-        operationParameter.export = 'generic';
-        operationParameter.type = definitionType.type;
-        operationParameter.base = definitionType.base;
-        operationParameter.template = definitionType.template;
-        operationParameter.imports.push(...definitionType.imports);
-        operationParameter.default = getOperationParameterDefault(parameter, operationParameter);
-        return operationParameter;
-    }
-    return operationParameter;
-};
-
-const getOperationParameters$1 = (openApi, parameters) => {
-    const operationParameters = {
-        imports: [],
-        parameters: [],
-        parametersPath: [],
-        parametersQuery: [],
-        parametersForm: [],
-        parametersCookie: [],
-        parametersHeader: [],
-        parametersBody: null,
-    };
-    // Iterate over the parameters
-    parameters.forEach(parameterOrReference => {
-        const parameterDef = getRef$1(openApi, parameterOrReference);
-        const parameter = getOperationParameter$1(openApi, parameterDef);
-        // We ignore the "api-version" param, since we do not want to add this
-        // as the first / default parameter for each of the service calls.
-        if (parameter.prop !== 'api-version') {
-            switch (parameter.in) {
-                case 'path':
-                    operationParameters.parametersPath.push(parameter);
-                    operationParameters.parameters.push(parameter);
-                    operationParameters.imports.push(...parameter.imports);
-                    break;
-                case 'query':
-                    operationParameters.parametersQuery.push(parameter);
-                    operationParameters.parameters.push(parameter);
-                    operationParameters.imports.push(...parameter.imports);
-                    break;
-                case 'header':
-                    operationParameters.parametersHeader.push(parameter);
-                    operationParameters.parameters.push(parameter);
-                    operationParameters.imports.push(...parameter.imports);
-                    break;
-                case 'formData':
-                    operationParameters.parametersForm.push(parameter);
-                    operationParameters.parameters.push(parameter);
-                    operationParameters.imports.push(...parameter.imports);
-                    break;
-                case 'body':
-                    operationParameters.parametersBody = parameter;
-                    operationParameters.parameters.push(parameter);
-                    operationParameters.imports.push(...parameter.imports);
-                    break;
-            }
-        }
-    });
-    return operationParameters;
-};
-
-const getOperationResponseHeader$1 = (operationResponses) => {
-    const header = operationResponses.find(operationResponses => {
-        return operationResponses.in === 'header';
-    });
-    if (header) {
-        return header.name;
-    }
-    return null;
-};
-
-const getOperationResponse$1 = (openApi, response, responseCode) => {
-    var _a;
-    const operationResponse = {
-        in: 'response',
-        name: '',
-        code: responseCode,
-        description: response.description || null,
-        export: 'generic',
-        type: 'any',
-        base: 'any',
-        template: null,
-        link: null,
-        isDefinition: false,
-        isReadOnly: false,
-        isRequired: false,
-        isNullable: false,
-        imports: [],
-        enum: [],
-        enums: [],
-        properties: [],
-    };
-    // If this response has a schema, then we need to check two things:
-    // if this is a reference then the parameter is just the 'name' of
-    // this reference type. Otherwise, it might be a complex schema,
-    // and then we need to parse the schema!
-    let schema = response.schema;
-    if (schema) {
-        if ((_a = schema.$ref) === null || _a === void 0 ? void 0 : _a.startsWith('#/responses/')) {
-            schema = getRef$1(openApi, schema);
-        }
-        if (schema.$ref) {
-            const model = getType$1(schema.$ref);
-            operationResponse.export = 'reference';
-            operationResponse.type = model.type;
-            operationResponse.base = model.base;
-            operationResponse.template = model.template;
-            operationResponse.imports.push(...model.imports);
-            return operationResponse;
-        }
-        else {
-            const model = getModel$1(openApi, schema);
-            operationResponse.export = model.export;
-            operationResponse.type = model.type;
-            operationResponse.base = model.base;
-            operationResponse.template = model.template;
-            operationResponse.link = model.link;
-            operationResponse.isReadOnly = model.isReadOnly;
-            operationResponse.isRequired = model.isRequired;
-            operationResponse.isNullable = model.isNullable;
-            operationResponse.format = model.format;
-            operationResponse.maximum = model.maximum;
-            operationResponse.exclusiveMaximum = model.exclusiveMaximum;
-            operationResponse.minimum = model.minimum;
-            operationResponse.exclusiveMinimum = model.exclusiveMinimum;
-            operationResponse.multipleOf = model.multipleOf;
-            operationResponse.maxLength = model.maxLength;
-            operationResponse.minLength = model.minLength;
-            operationResponse.maxItems = model.maxItems;
-            operationResponse.minItems = model.minItems;
-            operationResponse.uniqueItems = model.uniqueItems;
-            operationResponse.maxProperties = model.maxProperties;
-            operationResponse.minProperties = model.minProperties;
-            operationResponse.pattern = getPattern(model.pattern);
-            operationResponse.imports.push(...model.imports);
-            operationResponse.enum.push(...model.enum);
-            operationResponse.enums.push(...model.enums);
-            operationResponse.properties.push(...model.properties);
-            return operationResponse;
-        }
-    }
-    // We support basic properties from response headers, since both
-    // fetch and XHR client just support string types.
-    if (response.headers) {
-        for (const name in response.headers) {
-            if (response.headers.hasOwnProperty(name)) {
-                operationResponse.in = 'header';
-                operationResponse.name = name;
-                operationResponse.type = 'string';
-                operationResponse.base = 'string';
-                return operationResponse;
-            }
-        }
-    }
-    return operationResponse;
-};
-
-const getOperationResponseCode$1 = (value) => {
-    // You can specify a "default" response, this is treated as HTTP code 200
-    if (value === 'default') {
-        return 200;
-    }
-    // Check if we can parse the code and return of successful.
-    if (/[0-9]+/g.test(value)) {
-        const code = parseInt(value);
-        if (Number.isInteger(code)) {
-            return Math.abs(code);
-        }
-    }
-    return null;
-};
-
-const getOperationResponses$1 = (openApi, responses) => {
-    const operationResponses = [];
-    // Iterate over each response code and get the
-    // status code and response message (if any).
-    for (const code in responses) {
-        if (responses.hasOwnProperty(code)) {
-            const responseOrReference = responses[code];
-            const response = getRef$1(openApi, responseOrReference);
-            const responseCode = getOperationResponseCode$1(code);
-            if (responseCode) {
-                const operationResponse = getOperationResponse$1(openApi, response, responseCode);
-                operationResponses.push(operationResponse);
-            }
-        }
-    }
-    // Sort the responses to 2XX success codes come before 4XX and 5XX error codes.
-    return operationResponses.sort((a, b) => {
-        return a.code < b.code ? -1 : a.code > b.code ? 1 : 0;
-    });
-};
-
-const areEqual$1 = (a, b) => {
-    const equal = a.type === b.type && a.base === b.base && a.template === b.template;
-    if (equal && a.link && b.link) {
-        return areEqual$1(a.link, b.link);
-    }
-    return equal;
-};
-const getOperationResults$1 = (operationResponses) => {
-    const operationResults = [];
-    // Filter out success response codes, but skip "204 No Content"
-    operationResponses.forEach(operationResponse => {
-        const { code } = operationResponse;
-        if (code && code !== 204 && code >= 200 && code < 300) {
-            operationResults.push(operationResponse);
-        }
-    });
-    if (!operationResults.length) {
-        operationResults.push({
-            in: 'response',
-            name: '',
-            code: 200,
-            description: '',
-            export: 'generic',
-            type: 'void',
-            base: 'void',
-            template: null,
-            link: null,
-            isDefinition: false,
-            isReadOnly: false,
-            isRequired: false,
-            isNullable: false,
-            imports: [],
-            enum: [],
-            enums: [],
-            properties: [],
-        });
-    }
-    return operationResults.filter((operationResult, index, arr) => {
-        return (arr.findIndex(item => {
-            return areEqual$1(item, operationResult);
-        }) === index);
-    });
-};
-
-/**
- * Convert the input value to a correct service name. This converts
- * the input string to PascalCase.
- */
-const getServiceName$1 = (value) => {
-    const clean = value
-        .replace(/^[^a-zA-Z]+/g, '')
-        .replace(/[^\w\-]+/g, '-')
-        .trim();
-    return camelCase(clean, { pascalCase: true });
-};
-
-const sortByRequired$1 = (a, b) => {
-    const aNeedsValue = a.isRequired && a.default === undefined;
-    const bNeedsValue = b.isRequired && b.default === undefined;
-    if (aNeedsValue && !bNeedsValue)
-        return -1;
-    if (bNeedsValue && !aNeedsValue)
-        return 1;
-    return 0;
-};
-
-const getOperation$1 = (openApi, url, method, tag, op, pathParams) => {
-    const serviceName = getServiceName$1(tag);
-    const operationName = getOperationName$1(url, method, op.operationId);
-    // Create a new operation object for this method.
-    const operation = {
-        service: serviceName,
-        name: operationName,
-        summary: op.summary || null,
-        description: op.description || null,
-        deprecated: op.deprecated === true,
-        method: method.toUpperCase(),
-        path: url,
-        parameters: [...pathParams.parameters],
-        parametersPath: [...pathParams.parametersPath],
-        parametersQuery: [...pathParams.parametersQuery],
-        parametersForm: [...pathParams.parametersForm],
-        parametersHeader: [...pathParams.parametersHeader],
-        parametersCookie: [...pathParams.parametersCookie],
-        parametersBody: pathParams.parametersBody,
-        imports: [],
-        errors: [],
-        results: [],
-        responseHeader: null,
-    };
-    // Parse the operation parameters (path, query, body, etc).
-    if (op.parameters) {
-        const parameters = getOperationParameters$1(openApi, op.parameters);
-        operation.imports.push(...parameters.imports);
-        operation.parameters.push(...parameters.parameters);
-        operation.parametersPath.push(...parameters.parametersPath);
-        operation.parametersQuery.push(...parameters.parametersQuery);
-        operation.parametersForm.push(...parameters.parametersForm);
-        operation.parametersHeader.push(...parameters.parametersHeader);
-        operation.parametersCookie.push(...parameters.parametersCookie);
-        operation.parametersBody = parameters.parametersBody;
-    }
-    // Parse the operation responses.
-    if (op.responses) {
-        const operationResponses = getOperationResponses$1(openApi, op.responses);
-        const operationResults = getOperationResults$1(operationResponses);
-        operation.errors = getOperationErrors$1(operationResponses);
-        operation.responseHeader = getOperationResponseHeader$1(operationResults);
-        operationResults.forEach(operationResult => {
-            operation.results.push(operationResult);
-            operation.imports.push(...operationResult.imports);
-        });
-    }
-    operation.parameters = operation.parameters.sort(sortByRequired$1);
-    return operation;
-};
-
-/**
- * Get the OpenAPI services
- */
-const getServices$1 = (openApi) => {
-    var _a;
-    const services = new Map();
-    for (const url in openApi.paths) {
-        if (openApi.paths.hasOwnProperty(url)) {
-            // Grab path and parse any global path parameters
-            const path = openApi.paths[url];
-            const pathParams = getOperationParameters$1(openApi, path.parameters || []);
-            // Parse all the methods for this path
-            for (const method in path) {
-                if (path.hasOwnProperty(method)) {
-                    switch (method) {
-                        case 'get':
-                        case 'put':
-                        case 'post':
-                        case 'delete':
-                        case 'options':
-                        case 'head':
-                        case 'patch':
-                            // Each method contains an OpenAPI operation, we parse the operation
-                            const op = path[method];
-                            const tags = ((_a = op.tags) === null || _a === void 0 ? void 0 : _a.length) ? op.tags.filter(unique) : ['Default'];
-                            tags.forEach(tag => {
-                                const operation = getOperation$1(openApi, url, method, tag, op, pathParams);
-                                // If we have already declared a service, then we should fetch that and
-                                // append the new method to it. Otherwise we should create a new service object.
-                                const service = services.get(operation.service) || {
-                                    name: operation.service,
-                                    operations: [],
-                                    imports: [],
-                                };
-                                // Push the operation in the service
-                                service.operations.push(operation);
-                                service.imports.push(...operation.imports);
-                                services.set(operation.service, service);
-                            });
-                            break;
-                    }
-                }
-            }
-        }
-    }
-    return Array.from(services.values());
-};
-
-/**
- * Convert the service version to 'normal' version.
- * This basically removes any "v" prefix from the version string.
- * @param version
- */
-const getServiceVersion$1 = (version = '1.0') => {
-    return String(version).replace(/^v/gi, '');
-};
-
-/**
- * Parse the OpenAPI specification to a Client model that contains
- * all the models, services and schema's we should output.
- * @param openApi The OpenAPI spec  that we have loaded from disk.
- */
-const parse$1 = (openApi) => {
-    const version = getServiceVersion$1(openApi.info.version);
-    const server = getServer$1(openApi);
-    const models = getModels$1(openApi);
-    const services = getServices$1(openApi);
-    return { version, server, models, services };
 };
 
 /**
@@ -1761,6 +663,19 @@ const getModel = (openApi, definition, isDefinition = false, name = '') => {
     return model;
 };
 
+const reservedWords = /^(arguments|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|eval|export|extends|false|finally|for|function|if|implements|import|in|instanceof|interface|let|new|null|package|private|protected|public|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)$/g;
+/**
+ * Replaces any invalid characters from a parameter name.
+ * For example: 'filter.someProperty' becomes 'filterSomeProperty'.
+ */
+const getOperationParameterName = (value) => {
+    const clean = value
+        .replace(/^[^a-zA-Z]+/g, '')
+        .replace(/[^\w\-]+/g, '-')
+        .trim();
+    return camelCase(clean).replace(reservedWords, '_$1');
+};
+
 const getModels = (openApi) => {
     const models = [];
     if (openApi.components) {
@@ -1768,7 +683,7 @@ const getModels = (openApi) => {
             if (openApi.components.schemas.hasOwnProperty(definitionName)) {
                 const definition = openApi.components.schemas[definitionName];
                 const definitionType = getType(definitionName);
-                const model = getModel(openApi, definition, true, definitionType.base.replace(reservedWords$1, '_$1'));
+                const model = getModel(openApi, definition, true, definitionType.base.replace(reservedWords, '_$1'));
                 models.push(model);
             }
         }
@@ -1787,6 +702,10 @@ const getServer = (openApi) => {
         }
     }
     return url.replace(/\/$/g, '');
+};
+
+const unique = (val, index, arr) => {
+    return arr.indexOf(val) === index;
 };
 
 const getOperationErrors = (operationResponses) => {
@@ -1825,7 +744,7 @@ const getOperationParameter = (openApi, parameter) => {
         in: parameter.in,
         prop: parameter.name,
         export: 'interface',
-        name: getOperationParameterName$1(parameter.name),
+        name: getOperationParameterName(parameter.name),
         type: 'any',
         base: 'any',
         template: null,
@@ -2262,6 +1181,9 @@ const sortByRequired = (a, b) => {
 const getOperation = (openApi, url, method, tag, op, pathParams) => {
     const serviceName = getServiceName(tag);
     const operationName = getOperationName(url, method, op.operationId);
+    if (['PostCustomersCustomer', 'PostCustomers', 'GetCustomers', 'GetCustomersCustomer'].includes(op.operationId || '')) {
+        console.log(op);
+    }
     // Create a new operation object for this method.
     const operation = {
         service: serviceName,
@@ -2282,6 +1204,7 @@ const getOperation = (openApi, url, method, tag, op, pathParams) => {
         errors: [],
         results: [],
         responseHeader: null,
+        codegen: op['x-codegen'] || {},
     };
     // Parse the operation parameters (path, query, body, etc).
     if (op.parameters) {
@@ -4662,31 +3585,30 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "	/**\n"
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"deprecated"),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":25,"column":1},"end":{"line":27,"column":8}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"summary"),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":28,"column":1},"end":{"line":30,"column":8}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"description"),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":31,"column":1},"end":{"line":33,"column":8}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"unless").call(alias1,lookupProperty(lookupProperty(data,"root"),"useOptions"),{"name":"unless","hash":{},"fn":container.program(17, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":34,"column":1},"end":{"line":40,"column":12}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"each").call(alias1,lookupProperty(depth0,"results"),{"name":"each","hash":{},"fn":container.program(22, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":41,"column":1},"end":{"line":43,"column":10}}})) != null ? stack1 : "")
+  return ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(depth0,"summary"),"Create a Customer",{"name":"equals","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":25,"column":2},"end":{"line":27,"column":13}}})) != null ? stack1 : "")
+    + "	/**\n"
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"deprecated"),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":29,"column":1},"end":{"line":31,"column":8}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"summary"),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":32,"column":1},"end":{"line":34,"column":8}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"description"),{"name":"if","hash":{},"fn":container.program(17, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":35,"column":1},"end":{"line":37,"column":8}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"unless").call(alias1,lookupProperty(lookupProperty(data,"root"),"useOptions"),{"name":"unless","hash":{},"fn":container.program(19, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":38,"column":1},"end":{"line":44,"column":12}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"each").call(alias1,lookupProperty(depth0,"results"),{"name":"each","hash":{},"fn":container.program(24, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":45,"column":1},"end":{"line":47,"column":10}}})) != null ? stack1 : "")
     + "	 * @throws ApiError\n	 */\n"
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportClient"),{"name":"if","hash":{},"fn":container.program(24, data, 0),"inverse":container.program(26, data, 0),"data":data,"loc":{"start":{"line":46,"column":1},"end":{"line":52,"column":8}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportClient"),{"name":"if","hash":{},"fn":container.program(26, data, 0),"inverse":container.program(28, data, 0),"data":data,"loc":{"start":{"line":50,"column":1},"end":{"line":56,"column":8}}})) != null ? stack1 : "")
     + "			method: '"
-    + ((stack1 = alias3(alias2(depth0, "method", {"start":{"line":53,"column":15},"end":{"line":53,"column":21}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias3(alias2(depth0, "method", {"start":{"line":57,"column":15},"end":{"line":57,"column":21}} ), depth0)) != null ? stack1 : "")
     + "',\n			url: '"
-    + ((stack1 = alias3(alias2(depth0, "path", {"start":{"line":54,"column":12},"end":{"line":54,"column":16}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = alias3(alias2(depth0, "path", {"start":{"line":58,"column":12},"end":{"line":58,"column":16}} ), depth0)) != null ? stack1 : "")
     + "',\n"
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersPath"),{"name":"if","hash":{},"fn":container.program(28, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":55,"column":3},"end":{"line":61,"column":10}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersCookie"),{"name":"if","hash":{},"fn":container.program(31, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":62,"column":3},"end":{"line":68,"column":10}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersHeader"),{"name":"if","hash":{},"fn":container.program(33, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":69,"column":3},"end":{"line":75,"column":10}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersQuery"),{"name":"if","hash":{},"fn":container.program(35, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":76,"column":3},"end":{"line":82,"column":10}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersForm"),{"name":"if","hash":{},"fn":container.program(37, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":83,"column":3},"end":{"line":89,"column":10}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersBody"),{"name":"if","hash":{},"fn":container.program(39, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":90,"column":3},"end":{"line":100,"column":10}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"responseHeader"),{"name":"if","hash":{},"fn":container.program(46, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":101,"column":3},"end":{"line":103,"column":10}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"errors"),{"name":"if","hash":{},"fn":container.program(48, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":104,"column":3},"end":{"line":110,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersPath"),{"name":"if","hash":{},"fn":container.program(30, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":59,"column":3},"end":{"line":65,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersCookie"),{"name":"if","hash":{},"fn":container.program(33, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":66,"column":3},"end":{"line":72,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersHeader"),{"name":"if","hash":{},"fn":container.program(35, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":73,"column":3},"end":{"line":79,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersQuery"),{"name":"if","hash":{},"fn":container.program(37, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":80,"column":3},"end":{"line":86,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersForm"),{"name":"if","hash":{},"fn":container.program(39, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":87,"column":3},"end":{"line":93,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"parametersBody"),{"name":"if","hash":{},"fn":container.program(41, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":94,"column":3},"end":{"line":104,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"responseHeader"),{"name":"if","hash":{},"fn":container.program(48, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":105,"column":3},"end":{"line":107,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(depth0,"errors"),{"name":"if","hash":{},"fn":container.program(50, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":108,"column":3},"end":{"line":114,"column":10}}})) != null ? stack1 : "")
     + "		});\n	}\n\n";
 },"11":function(container,depth0,helpers,partials,data) {
-    return "	 * @deprecated\n";
-},"13":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -4694,9 +3616,11 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "	 * "
-    + ((stack1 = lookupProperty(helpers,"escapeComment").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"summary"),{"name":"escapeComment","hash":{},"data":data,"loc":{"start":{"line":29,"column":4},"end":{"line":29,"column":31}}})) != null ? stack1 : "")
+  return "			"
+    + ((stack1 = lookupProperty(helpers,"log").call(depth0 != null ? depth0 : (container.nullContext || {}),depth0,{"name":"log","hash":{},"data":data,"loc":{"start":{"line":26,"column":3},"end":{"line":26,"column":12}}})) != null ? stack1 : "")
     + "\n";
+},"13":function(container,depth0,helpers,partials,data) {
+    return "	 * @deprecated\n";
 },"15":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4706,7 +3630,7 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
     };
 
   return "	 * "
-    + ((stack1 = lookupProperty(helpers,"escapeComment").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"escapeComment","hash":{},"data":data,"loc":{"start":{"line":32,"column":4},"end":{"line":32,"column":35}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"escapeComment").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"summary"),{"name":"escapeComment","hash":{},"data":data,"loc":{"start":{"line":33,"column":4},"end":{"line":33,"column":31}}})) != null ? stack1 : "")
     + "\n";
 },"17":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -4716,16 +3640,9 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parameters"),{"name":"if","hash":{},"fn":container.program(18, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":35,"column":1},"end":{"line":39,"column":8}}})) != null ? stack1 : "");
-},"18":function(container,depth0,helpers,partials,data) {
-    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parameters"),{"name":"each","hash":{},"fn":container.program(19, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":36,"column":1},"end":{"line":38,"column":10}}})) != null ? stack1 : "");
+  return "	 * "
+    + ((stack1 = lookupProperty(helpers,"escapeComment").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"escapeComment","hash":{},"data":data,"loc":{"start":{"line":36,"column":4},"end":{"line":36,"column":35}}})) != null ? stack1 : "")
+    + "\n";
 },"19":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4734,11 +3651,7 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "	 * @param "
-    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":37,"column":14},"end":{"line":37,"column":18}} ), depth0)) != null ? stack1 : "")
-    + " "
-    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"if","hash":{},"fn":container.program(20, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":37,"column":22},"end":{"line":37,"column":79}}})) != null ? stack1 : "")
-    + "\n";
+  return ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parameters"),{"name":"if","hash":{},"fn":container.program(20, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":39,"column":1},"end":{"line":43,"column":8}}})) != null ? stack1 : "");
 },"20":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4747,7 +3660,20 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return ((stack1 = lookupProperty(helpers,"escapeComment").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"escapeComment","hash":{},"data":data,"loc":{"start":{"line":37,"column":41},"end":{"line":37,"column":72}}})) != null ? stack1 : "");
+  return ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parameters"),{"name":"each","hash":{},"fn":container.program(21, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":40,"column":1},"end":{"line":42,"column":10}}})) != null ? stack1 : "");
+},"21":function(container,depth0,helpers,partials,data) {
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "	 * @param "
+    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":41,"column":14},"end":{"line":41,"column":18}} ), depth0)) != null ? stack1 : "")
+    + " "
+    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"if","hash":{},"fn":container.program(22, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":41,"column":22},"end":{"line":41,"column":79}}})) != null ? stack1 : "")
+    + "\n";
 },"22":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4756,11 +3682,7 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "	 * @returns "
-    + ((stack1 = container.lambda(container.strict(depth0, "type", {"start":{"line":42,"column":16},"end":{"line":42,"column":20}} ), depth0)) != null ? stack1 : "")
-    + " "
-    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"if","hash":{},"fn":container.program(20, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":42,"column":24},"end":{"line":42,"column":81}}})) != null ? stack1 : "")
-    + "\n";
+  return ((stack1 = lookupProperty(helpers,"escapeComment").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"escapeComment","hash":{},"data":data,"loc":{"start":{"line":41,"column":41},"end":{"line":41,"column":72}}})) != null ? stack1 : "");
 },"24":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4769,13 +3691,11 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "	public "
-    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":47,"column":11},"end":{"line":47,"column":15}} ), depth0)) != null ? stack1 : "")
-    + "("
-    + ((stack1 = container.invokePartial(lookupProperty(partials,"parameters"),depth0,{"name":"parameters","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "): CancelablePromise<"
-    + ((stack1 = container.invokePartial(lookupProperty(partials,"result"),depth0,{"name":"result","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "> {\n		return this.httpRequest.request({\n";
+  return "	 * @returns "
+    + ((stack1 = container.lambda(container.strict(depth0, "type", {"start":{"line":46,"column":16},"end":{"line":46,"column":20}} ), depth0)) != null ? stack1 : "")
+    + " "
+    + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"if","hash":{},"fn":container.program(22, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":46,"column":24},"end":{"line":46,"column":81}}})) != null ? stack1 : "")
+    + "\n";
 },"26":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4784,13 +3704,13 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "	public static "
-    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":50,"column":18},"end":{"line":50,"column":22}} ), depth0)) != null ? stack1 : "")
+  return "	public "
+    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":51,"column":11},"end":{"line":51,"column":15}} ), depth0)) != null ? stack1 : "")
     + "("
     + ((stack1 = container.invokePartial(lookupProperty(partials,"parameters"),depth0,{"name":"parameters","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
     + "): CancelablePromise<"
     + ((stack1 = container.invokePartial(lookupProperty(partials,"result"),depth0,{"name":"result","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "> {\n		return __request(OpenAPI, {\n";
+    + "> {\n		return this.httpRequest.request({\n";
 },"28":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4799,18 +3719,14 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			path: {\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersPath"),{"name":"each","hash":{},"fn":container.program(29, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":57,"column":4},"end":{"line":59,"column":13}}})) != null ? stack1 : "")
-    + "			},\n";
-},"29":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=container.strict, alias2=container.lambda;
-
-  return "				'"
-    + ((stack1 = alias2(alias1(depth0, "prop", {"start":{"line":58,"column":8},"end":{"line":58,"column":12}} ), depth0)) != null ? stack1 : "")
-    + "': "
-    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":58,"column":21},"end":{"line":58,"column":25}} ), depth0)) != null ? stack1 : "")
-    + ",\n";
-},"31":function(container,depth0,helpers,partials,data) {
+  return "	public static "
+    + ((stack1 = container.lambda(container.strict(depth0, "name", {"start":{"line":54,"column":18},"end":{"line":54,"column":22}} ), depth0)) != null ? stack1 : "")
+    + "("
+    + ((stack1 = container.invokePartial(lookupProperty(partials,"parameters"),depth0,{"name":"parameters","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "): CancelablePromise<"
+    + ((stack1 = container.invokePartial(lookupProperty(partials,"result"),depth0,{"name":"result","data":data,"helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "> {\n		return __request(OpenAPI, {\n";
+},"30":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -4818,9 +3734,17 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			cookies: {\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersCookie"),{"name":"each","hash":{},"fn":container.program(29, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":64,"column":4},"end":{"line":66,"column":13}}})) != null ? stack1 : "")
+  return "			path: {\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersPath"),{"name":"each","hash":{},"fn":container.program(31, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":61,"column":4},"end":{"line":63,"column":13}}})) != null ? stack1 : "")
     + "			},\n";
+},"31":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=container.strict, alias2=container.lambda;
+
+  return "				'"
+    + ((stack1 = alias2(alias1(depth0, "prop", {"start":{"line":62,"column":8},"end":{"line":62,"column":12}} ), depth0)) != null ? stack1 : "")
+    + "': "
+    + ((stack1 = alias2(alias1(depth0, "name", {"start":{"line":62,"column":21},"end":{"line":62,"column":25}} ), depth0)) != null ? stack1 : "")
+    + ",\n";
 },"33":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4829,8 +3753,8 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			headers: {\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersHeader"),{"name":"each","hash":{},"fn":container.program(29, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":71,"column":4},"end":{"line":73,"column":13}}})) != null ? stack1 : "")
+  return "			cookies: {\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersCookie"),{"name":"each","hash":{},"fn":container.program(31, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":68,"column":4},"end":{"line":70,"column":13}}})) != null ? stack1 : "")
     + "			},\n";
 },"35":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -4840,8 +3764,8 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			query: {\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersQuery"),{"name":"each","hash":{},"fn":container.program(29, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":78,"column":4},"end":{"line":80,"column":13}}})) != null ? stack1 : "")
+  return "			headers: {\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersHeader"),{"name":"each","hash":{},"fn":container.program(31, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":75,"column":4},"end":{"line":77,"column":13}}})) != null ? stack1 : "")
     + "			},\n";
 },"37":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -4851,21 +3775,10 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			formData: {\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersForm"),{"name":"each","hash":{},"fn":container.program(29, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":85,"column":4},"end":{"line":87,"column":13}}})) != null ? stack1 : "")
+  return "			query: {\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersQuery"),{"name":"each","hash":{},"fn":container.program(31, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":82,"column":4},"end":{"line":84,"column":13}}})) != null ? stack1 : "")
     + "			},\n";
 },"39":function(container,depth0,helpers,partials,data) {
-    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
-        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
-          return parent[propertyName];
-        }
-        return undefined
-    };
-
-  return ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(lookupProperty(depth0,"parametersBody"),"in"),"formData",{"name":"equals","hash":{},"fn":container.program(40, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":91,"column":3},"end":{"line":93,"column":14}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(lookupProperty(depth0,"parametersBody"),"in"),"body",{"name":"equals","hash":{},"fn":container.program(42, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":94,"column":3},"end":{"line":96,"column":14}}})) != null ? stack1 : "")
-    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(depth0,"parametersBody"),"mediaType"),{"name":"if","hash":{},"fn":container.program(44, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":97,"column":3},"end":{"line":99,"column":10}}})) != null ? stack1 : "");
-},"40":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -4873,9 +3786,20 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			formData: "
-    + ((stack1 = container.lambda(container.strict(lookupProperty(depth0,"parametersBody"), "name", {"start":{"line":92,"column":16},"end":{"line":92,"column":35}} ), depth0)) != null ? stack1 : "")
-    + ",\n";
+  return "			formData: {\n"
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"parametersForm"),{"name":"each","hash":{},"fn":container.program(31, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":89,"column":4},"end":{"line":91,"column":13}}})) != null ? stack1 : "")
+    + "			},\n";
+},"41":function(container,depth0,helpers,partials,data) {
+    var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(lookupProperty(depth0,"parametersBody"),"in"),"formData",{"name":"equals","hash":{},"fn":container.program(42, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":95,"column":3},"end":{"line":97,"column":14}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"equals").call(alias1,lookupProperty(lookupProperty(depth0,"parametersBody"),"in"),"body",{"name":"equals","hash":{},"fn":container.program(44, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":98,"column":3},"end":{"line":100,"column":14}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(depth0,"parametersBody"),"mediaType"),{"name":"if","hash":{},"fn":container.program(46, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":101,"column":3},"end":{"line":103,"column":10}}})) != null ? stack1 : "");
 },"42":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
@@ -4884,8 +3808,8 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			body: "
-    + ((stack1 = container.lambda(container.strict(lookupProperty(depth0,"parametersBody"), "name", {"start":{"line":95,"column":12},"end":{"line":95,"column":31}} ), depth0)) != null ? stack1 : "")
+  return "			formData: "
+    + ((stack1 = container.lambda(container.strict(lookupProperty(depth0,"parametersBody"), "name", {"start":{"line":96,"column":16},"end":{"line":96,"column":35}} ), depth0)) != null ? stack1 : "")
     + ",\n";
 },"44":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -4895,16 +3819,27 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
         return undefined
     };
 
-  return "			mediaType: '"
-    + ((stack1 = container.lambda(container.strict(lookupProperty(depth0,"parametersBody"), "mediaType", {"start":{"line":98,"column":18},"end":{"line":98,"column":42}} ), depth0)) != null ? stack1 : "")
-    + "',\n";
+  return "			body: "
+    + ((stack1 = container.lambda(container.strict(lookupProperty(depth0,"parametersBody"), "name", {"start":{"line":99,"column":12},"end":{"line":99,"column":31}} ), depth0)) != null ? stack1 : "")
+    + ",\n";
 },"46":function(container,depth0,helpers,partials,data) {
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "			mediaType: '"
+    + ((stack1 = container.lambda(container.strict(lookupProperty(depth0,"parametersBody"), "mediaType", {"start":{"line":102,"column":18},"end":{"line":102,"column":42}} ), depth0)) != null ? stack1 : "")
+    + "',\n";
+},"48":function(container,depth0,helpers,partials,data) {
     var stack1;
 
   return "			responseHeader: '"
-    + ((stack1 = container.lambda(container.strict(depth0, "responseHeader", {"start":{"line":102,"column":23},"end":{"line":102,"column":37}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = container.lambda(container.strict(depth0, "responseHeader", {"start":{"line":106,"column":23},"end":{"line":106,"column":37}} ), depth0)) != null ? stack1 : "")
     + "',\n";
-},"48":function(container,depth0,helpers,partials,data) {
+},"50":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -4913,9 +3848,9 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
     };
 
   return "			errors: {\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"errors"),{"name":"each","hash":{},"fn":container.program(49, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":106,"column":4},"end":{"line":108,"column":13}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"errors"),{"name":"each","hash":{},"fn":container.program(51, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":110,"column":4},"end":{"line":112,"column":13}}})) != null ? stack1 : "")
     + "			},\n";
-},"49":function(container,depth0,helpers,partials,data) {
+},"51":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -4924,9 +3859,9 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
     };
 
   return "				"
-    + ((stack1 = container.lambda(container.strict(depth0, "code", {"start":{"line":107,"column":7},"end":{"line":107,"column":11}} ), depth0)) != null ? stack1 : "")
+    + ((stack1 = container.lambda(container.strict(depth0, "code", {"start":{"line":111,"column":7},"end":{"line":111,"column":11}} ), depth0)) != null ? stack1 : "")
     + ": `"
-    + ((stack1 = lookupProperty(helpers,"escapeDescription").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"escapeDescription","hash":{},"data":data,"loc":{"start":{"line":107,"column":17},"end":{"line":107,"column":52}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"escapeDescription").call(depth0 != null ? depth0 : (container.nullContext || {}),lookupProperty(depth0,"description"),{"name":"escapeDescription","hash":{},"data":data,"loc":{"start":{"line":111,"column":17},"end":{"line":111,"column":52}}})) != null ? stack1 : "")
     + "`,\n";
 },"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.strict, alias3=container.lambda, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -4947,7 +3882,7 @@ var templateExportService = {"1":function(container,depth0,helpers,partials,data
     + " {\n"
     + ((stack1 = lookupProperty(helpers,"if").call(alias1,lookupProperty(lookupProperty(data,"root"),"exportClient"),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":18,"column":1},"end":{"line":21,"column":8}}})) != null ? stack1 : "")
     + "\n"
-    + ((stack1 = lookupProperty(helpers,"each").call(alias1,lookupProperty(depth0,"operations"),{"name":"each","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":23,"column":1},"end":{"line":114,"column":10}}})) != null ? stack1 : "")
+    + ((stack1 = lookupProperty(helpers,"each").call(alias1,lookupProperty(depth0,"operations"),{"name":"each","hash":{},"fn":container.program(10, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":23,"column":1},"end":{"line":118,"column":10}}})) != null ? stack1 : "")
     + "}";
 },"usePartial":true,"useData":true};
 
@@ -7397,29 +6332,16 @@ const writeClient = async (client, templates, output, httpClient, useOptions, us
  */
 const generate = async ({ input, output, httpClient = exports.HttpClient.FETCH, clientName, useOptions = false, useUnionTypes = false, exportCore = true, exportServices = true, exportModels = true, exportHooks = true, exportSchemas = false, indent = exports.Indent.SPACE_4, postfixServices = 'Service', postfixModels = '', request, write = true, }) => {
     const openApi = isString(input) ? await getOpenApiSpec(input) : input;
-    const openApiVersion = getOpenApiVersion(openApi);
+    getOpenApiVersion(openApi);
     const templates = registerHandlebarTemplates({
         httpClient,
         useUnionTypes,
         useOptions,
     });
-    switch (openApiVersion) {
-        case OpenApiVersion.V2: {
-            const client = parse$1(openApi);
-            const clientFinal = postProcessClient(client);
-            if (!write)
-                break;
-            await writeClient(clientFinal, templates, output, httpClient, useOptions, useUnionTypes, exportCore, exportServices, exportModels, exportHooks, exportSchemas, indent, postfixServices, postfixModels, clientName, request);
-            break;
-        }
-        case OpenApiVersion.V3: {
-            const client = parse(openApi);
-            const clientFinal = postProcessClient(client);
-            if (!write)
-                break;
-            await writeClient(clientFinal, templates, output, httpClient, useOptions, useUnionTypes, exportCore, exportServices, exportModels, exportHooks, exportSchemas, indent, postfixServices, postfixModels, clientName, request);
-            break;
-        }
+    const client = parse(openApi);
+    const clientFinal = postProcessClient(client);
+    if (write) {
+        await writeClient(clientFinal, templates, output, httpClient, useOptions, useUnionTypes, exportCore, exportServices, exportModels, exportHooks, exportSchemas, indent, postfixServices, postfixModels, clientName, request);
     }
 };
 var index = {

@@ -1,9 +1,8 @@
 import { HttpClient } from './HttpClient';
 import { Indent } from './Indent';
-import { parse as parseV2 } from './openApi/v2';
-import { parse as parseV3 } from './openApi/v3';
+import { parse } from './openApi/v3';
 import { getOpenApiSpec } from './utils/getOpenApiSpec';
-import { getOpenApiVersion, OpenApiVersion } from './utils/getOpenApiVersion';
+import { getOpenApiVersion } from './utils/getOpenApiVersion';
 import { isString } from './utils/isString';
 import { postProcessClient } from './utils/postProcessClient';
 import { registerHandlebarTemplates } from './utils/registerHandlebarTemplates';
@@ -78,56 +77,27 @@ export const generate = async ({
         useOptions,
     });
 
-    switch (openApiVersion) {
-        case OpenApiVersion.V2: {
-            const client = parseV2(openApi);
-            const clientFinal = postProcessClient(client);
-            if (!write) break;
-            await writeClient(
-                clientFinal,
-                templates,
-                output,
-                httpClient,
-                useOptions,
-                useUnionTypes,
-                exportCore,
-                exportServices,
-                exportModels,
-                exportHooks,
-                exportSchemas,
-                indent,
-                postfixServices,
-                postfixModels,
-                clientName,
-                request
-            );
-            break;
-        }
-
-        case OpenApiVersion.V3: {
-            const client = parseV3(openApi);
-            const clientFinal = postProcessClient(client);
-            if (!write) break;
-            await writeClient(
-                clientFinal,
-                templates,
-                output,
-                httpClient,
-                useOptions,
-                useUnionTypes,
-                exportCore,
-                exportServices,
-                exportModels,
-                exportHooks,
-                exportSchemas,
-                indent,
-                postfixServices,
-                postfixModels,
-                clientName,
-                request
-            );
-            break;
-        }
+    const client = parse(openApi);
+    const clientFinal = postProcessClient(client);
+    if (write) {
+        await writeClient(
+            clientFinal,
+            templates,
+            output,
+            httpClient,
+            useOptions,
+            useUnionTypes,
+            exportCore,
+            exportServices,
+            exportModels,
+            exportHooks,
+            exportSchemas,
+            indent,
+            postfixServices,
+            postfixModels,
+            clientName,
+            request
+        );
     }
 };
 
