@@ -23,4 +23,5 @@ export interface OpenApiOperation {
     deprecated?: boolean;
     security?: OpenApiSecurityRequirement[];
     servers?: OpenApiServer[];
+    'x-codegen'?: Record<string, unknown>;
 }

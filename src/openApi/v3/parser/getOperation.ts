@@ -1,5 +1,6 @@
 import type { Operation } from '../../../client/interfaces/Operation';
 import type { OperationParameters } from '../../../client/interfaces/OperationParameters';
+import type { OperationCodegen } from '../../../client/interfaces/OperationCodegen';
 import type { OpenApi } from '../interfaces/OpenApi';
 import type { OpenApiOperation } from '../interfaces/OpenApiOperation';
 import type { OpenApiRequestBody } from '../interfaces/OpenApiRequestBody';
@@ -24,11 +25,13 @@ export const getOperation = (
 ): Operation => {
     const serviceName = getServiceName(tag);
     const operationName = getOperationName(url, method, op.operationId);
+    const codegen: OperationCodegen = op['x-codegen'] || {};
 
     // Create a new operation object for this method.
     const operation: Operation = {
         service: serviceName,
-        name: operationName,
+        name: codegen.method || operationName,
+        operationId: op.operationId || null,
         summary: op.summary || null,
         description: op.description || null,
         deprecated: op.deprecated === true,
@@ -45,6 +48,7 @@ export const getOperation = (
         errors: [],
         results: [],
         responseHeader: null,
+        codegen,
     };
 
     // Parse the operation parameters (path, query, body, etc).
