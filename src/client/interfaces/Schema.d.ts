@@ -1,4 +1,7 @@
+import { OpenApiSchema } from '../../openApi/v3/interfaces/OpenApiSchema';
+
 export interface Schema {
+    spec: OpenApiSchema;
     isDefinition: boolean;
     isReadOnly: boolean;
     isRequired: boolean;

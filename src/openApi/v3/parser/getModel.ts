@@ -16,6 +16,7 @@ export const getModel = (
     name: string = ''
 ): Model => {
     const model: Model = {
+        spec: definition,
         name,
         export: 'interface',
         type: 'any',

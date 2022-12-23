@@ -13,6 +13,7 @@ describe('writeClientModels', () => {
     it('should write to filesystem', async () => {
         const models: Model[] = [
             {
+                spec: {},
                 export: 'interface',
                 name: 'User',
                 type: 'User',

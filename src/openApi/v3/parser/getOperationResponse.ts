@@ -14,6 +14,7 @@ export const getOperationResponse = (
     responseCode: number
 ): OperationResponse => {
     const operationResponse: OperationResponse = {
+        spec: response,
         in: 'response',
         name: '',
         code: responseCode,

@@ -35,6 +35,7 @@ export const getModelProperties = (
                 | 'enums'
                 | 'properties'
             > = {
+                spec: definition,
                 name: escapeName(propertyName),
                 description: property.description || null,
                 deprecated: property.deprecated === true,

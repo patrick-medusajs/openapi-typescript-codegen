@@ -11,6 +11,7 @@ import { getType } from './getType';
 
 export const getOperationParameter = (openApi: OpenApi, parameter: OpenApiParameter): OperationParameter => {
     const operationParameter: OperationParameter = {
+        spec: parameter,
         in: parameter.in,
         prop: parameter.name,
         export: 'interface',

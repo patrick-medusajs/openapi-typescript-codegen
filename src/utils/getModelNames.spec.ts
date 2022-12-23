@@ -4,6 +4,7 @@ import { getModelNames } from './getModelNames';
 describe('getModelNames', () => {
     it('should return sorted list', () => {
         const john: Model = {
+            spec: {},
             export: 'interface',
             name: 'John',
             type: 'John',
@@ -21,6 +22,7 @@ describe('getModelNames', () => {
             properties: [],
         };
         const jane: Model = {
+            spec: {},
             export: 'interface',
             name: 'Jane',
             type: 'Jane',
@@ -38,6 +40,7 @@ describe('getModelNames', () => {
             properties: [],
         };
         const doe: Model = {
+            spec: {},
             export: 'interface',
             name: 'Doe',
             type: 'Doe',

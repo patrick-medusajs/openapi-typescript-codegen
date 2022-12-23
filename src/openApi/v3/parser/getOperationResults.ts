@@ -22,6 +22,7 @@ export const getOperationResults = (operationResponses: OperationResponse[]): Op
 
     if (!operationResults.length) {
         operationResults.push({
+            spec: { description: '' },
             in: 'response',
             name: '',
             code: 200,

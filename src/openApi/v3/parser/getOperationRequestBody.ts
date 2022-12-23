@@ -8,6 +8,7 @@ import { getType } from './getType';
 
 export const getOperationRequestBody = (openApi: OpenApi, body: OpenApiRequestBody): OperationParameter => {
     const requestBody: OperationParameter = {
+        spec: body,
         in: 'body',
         export: 'interface',
         prop: 'requestBody',
