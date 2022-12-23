@@ -1,28 +1,41 @@
 {{#if parameters}}
-{{#if @root.useOptions~}}
-{
-{{#each parameters}}
-{{{name}}}{{#if default}} = {{{default}}}{{/if}},
-{{/each}}
-}: {
-{{#each parameters}}
-{{#ifdef description deprecated}}
-/**
-{{#if description}}
- * {{{escapeComment description}}}
-{{/if}}
-{{#if deprecated}}
- * @deprecated
-{{/if}}
- */
-{{/ifdef}}
-{{{name}}}{{>isRequired}}: {{>type}},
-{{/each}}
-}
-{{~else}}
+	{{#if parametersPath}}
 
-{{#each parameters}}
-{{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}},
-{{/each}}
-{{/if}}
+		{{#each parametersPath}}
+  			{{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{#unless @last}},
+			{{/unless}}
+		{{~/each}}
+	{{~/if}}
+	{{~#if parametersPath}}{{#unless parametersBody}}{{#unless parametersQuery}}
+	{{/unless}}{{/unless}}{{/if}}
+	{{~#if parametersBody}}
+		{{~#if parametersPath}},{{/if}}
+		{{#with parametersBody}}
+			{{{name}}}: {{>type}}
+		{{~/with}}
+		{{~#if parametersQuery}}, {{else}}
+		{{/if}}
+	{{~/if}}
+	{{~#if parametersQuery}}
+		{{~#if parametersPath}}{{#unless parametersBody}},{{/unless}}{{/if}}
+		{{#if codegen.queryParams}}
+			queryParams: {{codegen.queryParams}}
+		{{else}}
+			queryParams: {
+				{{#each parametersQuery}}
+					{{#ifdef description deprecated}}
+					/**
+					{{#if description}}
+					 * {{{escapeComment description}}}
+					{{/if}}
+					{{#if deprecated}}
+					 * @deprecated
+					{{/if}}
+					 */
+					{{/ifdef}}
+					{{{name}}}{{>isRequired}}: {{>type}},
+				{{/each}}
+			}
+		{{/if}}
+	{{/if}}
 {{/if}}

@@ -85,6 +85,10 @@ export const getOperation = (
         });
     }
 
+    if (codegen.queryParams) {
+        operation.imports.push(codegen.queryParams);
+    }
+
     operation.parameters = operation.parameters.sort(sortByRequired);
 
     return operation;
