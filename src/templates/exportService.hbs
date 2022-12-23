@@ -25,6 +25,9 @@ export class {{{name}}}{{{@root.postfix}}} {
 	{{#if deprecated}}
 	 * @deprecated
 	{{/if}}
+	{{#if operationId}}
+	 * {{{escapeComment operationId}}}
+	{{/if}}
 	{{#if summary}}
 	 * {{{escapeComment summary}}}
 	{{/if}}

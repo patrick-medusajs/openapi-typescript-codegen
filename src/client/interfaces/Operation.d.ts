@@ -6,6 +6,7 @@ import type { OperationCodegen } from './OperationCodegen';
 export interface Operation extends OperationParameters {
     service: string;
     name: string;
+    operationId: string | null;
     summary: string | null;
     description: string | null;
     deprecated: boolean;
