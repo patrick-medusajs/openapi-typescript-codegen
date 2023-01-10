@@ -47,10 +47,16 @@ export class {{{name}}}{{{@root.postfix}}} {
 	 * @throws ApiError
 	 */
 	{{#if @root.exportClient}}
-	public {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
+	public {{{name}}}(
+		{{~>parameters~}},
+		customHeaders: Record<string, any> = {}
+	): CancelablePromise<{{>result}}> {
 		return this.httpRequest.request({
 	{{else}}
-	public static {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
+	public static {{{name}}}(
+		{{~>parameters~}},
+		customHeaders: Record<string, any> = {}
+	): CancelablePromise<{{>result}}> {
 		return __request(OpenAPI, {
 	{{/if}}
 			method: '{{{method}}}',
@@ -69,13 +75,7 @@ export class {{{name}}}{{{@root.postfix}}} {
 				{{/each}}
 			},
 			{{/if}}
-			{{#if parametersHeader}}
-			headers: {
-				{{#each parametersHeader}}
-				'{{{prop}}}': {{{name}}},
-				{{/each}}
-			},
-			{{/if}}
+			headers: customHeaders,
 			{{#if parametersQuery}}
 			query: {
 				{{#each parametersQuery}}

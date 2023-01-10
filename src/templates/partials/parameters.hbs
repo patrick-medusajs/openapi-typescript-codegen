@@ -1,26 +1,23 @@
-{{#if parameters}}
-	{{#if parametersPath}}
+{{~#if parameters}}
+	{{~#if parametersPath}}
 
 		{{#each parametersPath}}
   			{{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{#unless @last}},
 			{{/unless}}
 		{{~/each}}
 	{{~/if}}
-	{{~#if parametersPath}}{{#unless parametersBody}}{{#unless parametersQuery}}
-	{{/unless}}{{/unless}}{{/if}}
 	{{~#if parametersBody}}
 		{{~#if parametersPath}},{{/if}}
 		{{#with parametersBody}}
 			{{{name}}}: {{>type}}
 		{{~/with}}
-		{{~#if parametersQuery}}, {{else}}
-		{{/if}}
+		{{~#if parametersQuery}},{{/if}}
 	{{~/if}}
 	{{~#if parametersQuery}}
 		{{~#if parametersPath}}{{#unless parametersBody}},{{/unless}}{{/if}}
 		{{#if codegen.queryParams}}
 			queryParams: {{codegen.queryParams}}
-		{{else}}
+		{{~else~}}
 			queryParams: {
 				{{#each parametersQuery}}
 					{{#ifdef description deprecated}}
@@ -36,6 +33,6 @@
 					{{{name}}}{{>isRequired}}: {{>type}},
 				{{/each}}
 			}
-		{{/if}}
-	{{/if}}
-{{/if}}
+		{{~/if}}
+	{{~/if}}
+{{~/if}}
