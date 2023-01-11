@@ -48,13 +48,13 @@ export class {{{name}}}{{{@root.postfix}}} {
 	 */
 	{{#if @root.exportClient}}
 	public {{{name}}}(
-		{{~>parameters~}},
+		{{~#if parameters}}{{~>parameters~}},{{/if}}
 		customHeaders: Record<string, any> = {}
 	): CancelablePromise<{{>result}}> {
 		return this.httpRequest.request({
 	{{else}}
 	public static {{{name}}}(
-		{{~>parameters~}},
+		{{#if parameters}}{{~>parameters~}},{{/if}}
 		customHeaders: Record<string, any> = {}
 	): CancelablePromise<{{>result}}> {
 		return __request(OpenAPI, {

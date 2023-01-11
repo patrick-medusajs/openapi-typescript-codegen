@@ -51,6 +51,7 @@ describe('writeClientModels', () => {
                 request: () => 'request',
                 baseHttpRequest: () => 'baseHttpRequest',
                 httpRequest: () => 'httpRequest',
+                hookUtils: () => 'hookUtils',
             },
         };
 

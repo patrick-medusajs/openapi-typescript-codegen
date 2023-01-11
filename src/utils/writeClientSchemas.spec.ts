@@ -51,6 +51,7 @@ describe('writeClientSchemas', () => {
                 request: () => 'request',
                 baseHttpRequest: () => 'baseHttpRequest',
                 httpRequest: () => 'httpRequest',
+                hookUtils: () => 'hookUtils',
             },
         };
 

@@ -37,6 +37,7 @@ describe('writeClientCore', () => {
                 request: () => 'request',
                 baseHttpRequest: () => 'baseHttpRequest',
                 httpRequest: () => 'httpRequest',
+                hookUtils: () => 'hookUtils',
             },
         };
 

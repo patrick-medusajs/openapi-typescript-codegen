@@ -6,6 +6,7 @@ import templateUseClient from '../templates/useClient.hbs';
 import templateCoreApiError from '../templates/core/ApiError.hbs';
 import templateCoreApiRequestOptions from '../templates/core/ApiRequestOptions.hbs';
 import templateCoreApiResult from '../templates/core/ApiResult.hbs';
+import templateCoreHookUtils from '../templates/core/HookUtils.hbs';
 import axiosGetHeaders from '../templates/core/axios/getHeaders.hbs';
 import axiosGetRequestBody from '../templates/core/axios/getRequestBody.hbs';
 import axiosGetResponseBody from '../templates/core/axios/getResponseBody.hbs';
@@ -62,6 +63,7 @@ import partialIsNullable from '../templates/partials/isNullable.hbs';
 import partialIsReadOnly from '../templates/partials/isReadOnly.hbs';
 import partialIsRequired from '../templates/partials/isRequired.hbs';
 import partialParameters from '../templates/partials/parameters.hbs';
+import partialParametersUntyped from '../templates/partials/parametersUntyped.hbs';
 import partialResult from '../templates/partials/result.hbs';
 import partialSchema from '../templates/partials/schema.hbs';
 import partialSchemaArray from '../templates/partials/schemaArray.hbs';
@@ -100,6 +102,7 @@ export interface Templates {
         request: Handlebars.TemplateDelegate;
         baseHttpRequest: Handlebars.TemplateDelegate;
         httpRequest: Handlebars.TemplateDelegate;
+        hookUtils: Handlebars.TemplateDelegate;
     };
 }
 
@@ -134,6 +137,7 @@ export const registerHandlebarTemplates = (root: {
             request: Handlebars.template(templateCoreRequest),
             baseHttpRequest: Handlebars.template(templateCoreBaseHttpRequest),
             httpRequest: Handlebars.template(templateCoreHttpRequest),
+            hookUtils: Handlebars.template(templateCoreHookUtils),
         },
     };
 
@@ -147,6 +151,7 @@ export const registerHandlebarTemplates = (root: {
     Handlebars.registerPartial('isReadOnly', Handlebars.template(partialIsReadOnly));
     Handlebars.registerPartial('isRequired', Handlebars.template(partialIsRequired));
     Handlebars.registerPartial('parameters', Handlebars.template(partialParameters));
+    Handlebars.registerPartial('parametersUntyped', Handlebars.template(partialParametersUntyped));
     Handlebars.registerPartial('result', Handlebars.template(partialResult));
     Handlebars.registerPartial('schema', Handlebars.template(partialSchema));
     Handlebars.registerPartial('schemaArray', Handlebars.template(partialSchemaArray));

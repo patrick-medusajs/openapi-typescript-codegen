@@ -1,7 +1,7 @@
 {{>header}}
 
-import { useQuery, useMutation } from 'react-query';
-import { {{{clientName}}} } from '../{{{clientName}}}';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { UseQueryOptionsWrapper, UseMutationOptionsWrapper} from '../core/HookUtils';
 import { use{{{pascalCase clientName}}} } from '../use{{pascalCase clientName}}';
 {{#if imports}}
 	{{#each imports}}
@@ -10,25 +10,38 @@ import { use{{{pascalCase clientName}}} } from '../use{{pascalCase clientName}}'
 {{/if}}
 
 {{#each operations}}
-	export const use{{{pascalCase name}}} = ({{>parameters}}{{#if parameters}}, {{/if}}options = {}) => {
+	export const use{{{service}}}{{{pascalCase name}}} = (
+		{{~#if parameters}}{{~>parameters~}},{{/if}}
+		{{#equals method 'GET'}}
+			options: UseQueryOptionsWrapper<Awaited<ReturnType<typeof client.{{camelCase service}}.{{name}}>>> = {}
+		{{else}}
+			options: UseMutationOptionsWrapper<Awaited<ReturnType<typeof client.{{camelCase service}}.{{name}}>>, unknown,
+				{{~#if parametersBody}} {{parametersBody.type}}{{else}} void{{/if~}}
+			> = {}
+		{{/equals}}
+	) => {
 		const { client } = use{{{pascalCase ../clientName}}}()
 		{{#equals method 'GET'}}
-			const { data, ...rest } = useQuery(['{{ camelCase service}}', '{{ camelCase name }}', {{#each parameters}}{{name}}, {{/each}}], async () => {
-				return client.{{camelCase service}}.{{name}}({{#if parameters}}{
-					{{#each parameters}}
-					{{name}},
-					{{/each}}
-				}{{/if}});
-			});
+			const { data, ...rest } = useQuery<Awaited<ReturnType<typeof client.{{camelCase service}}.{{name}}>>>(
+				['{{camelCase service}}', '{{ camelCase name }}'{{#if parameters}}, {{>parametersUntyped}}{{/if}}],
+				() => client.{{camelCase service}}.{{name}}({{#if parameters}}{{>parametersUntyped}}{{/if}}),
+				options
+			);
 			return { ...data, ...rest } as const
 		{{else}}
-			return useMutation(async () => {
-				return client.{{camelCase service}}.{{name}}({{#if parameters}}{
-					{{#each parameters}}
-					{{name}},
-					{{/each}}
-				}{{/if}});
-			});
+			if (!options?.onSuccess) {
+				const queryClient = useQueryClient()
+				options.onSuccess = async () => {
+					await queryClient.invalidateQueries('{{camelCase service}}')
+				}
+			}
+			return useMutation<Awaited<ReturnType<typeof client.{{camelCase service}}.{{name}}>>, unknown,
+				{{~#if parametersBody}} {{parametersBody.type}}{{else}} void{{/if~}}
+			>(
+				['{{camelCase service}}', '{{ camelCase name }}'{{#if parameters}}, {{>parametersUntyped}}{{/if}}],
+				() => client.{{camelCase service}}.{{name}}({{#if parameters}}{{>parametersUntyped}}{{/if}}),
+				options
+			);
 		{{/equals}}
 	};
 
