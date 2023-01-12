@@ -1520,7 +1520,11 @@ const postProcessClient = (client) => {
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var handlebars_runtime = {exports: {}};
+var handlebars_runtimeExports = {};
+var handlebars_runtime = {
+  get exports(){ return handlebars_runtimeExports; },
+  set exports(v){ handlebars_runtimeExports = v; },
+};
 
 var base = {};
 
@@ -1648,7 +1652,11 @@ function appendContextPath(contextPath, id) {
   return (contextPath ? contextPath + '.' : '') + id;
 }
 
-var exception = {exports: {}};
+var exceptionExports = {};
+var exception = {
+  get exports(){ return exceptionExports; },
+  set exports(v){ exceptionExports = v; },
+};
 
 (function (module, exports) {
 
@@ -1714,11 +1722,15 @@ var exception = {exports: {}};
 	exports['default'] = Exception;
 	module.exports = exports['default'];
 	
-} (exception, exception.exports));
+} (exception, exceptionExports));
 
 var helpers = {};
 
-var blockHelperMissing = {exports: {}};
+var blockHelperMissingExports = {};
+var blockHelperMissing = {
+  get exports(){ return blockHelperMissingExports; },
+  set exports(v){ blockHelperMissingExports = v; },
+};
 
 (function (module, exports) {
 
@@ -1759,9 +1771,13 @@ var blockHelperMissing = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (blockHelperMissing, blockHelperMissing.exports));
+} (blockHelperMissing, blockHelperMissingExports));
 
-var each = {exports: {}};
+var eachExports = {};
+var each = {
+  get exports(){ return eachExports; },
+  set exports(v){ eachExports = v; },
+};
 
 (function (module, exports) {
 
@@ -1772,7 +1788,7 @@ var each = {exports: {}};
 
 	var _utils = utils;
 
-	var _exception = exception.exports;
+	var _exception = exceptionExports;
 
 	var _exception2 = _interopRequireDefault(_exception);
 
@@ -1867,9 +1883,13 @@ var each = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (each, each.exports));
+} (each, eachExports));
 
-var helperMissing = {exports: {}};
+var helperMissingExports = {};
+var helperMissing = {
+  get exports(){ return helperMissingExports; },
+  set exports(v){ helperMissingExports = v; },
+};
 
 (function (module, exports) {
 
@@ -1878,7 +1898,7 @@ var helperMissing = {exports: {}};
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _exception = exception.exports;
+	var _exception = exceptionExports;
 
 	var _exception2 = _interopRequireDefault(_exception);
 
@@ -1896,9 +1916,13 @@ var helperMissing = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (helperMissing, helperMissing.exports));
+} (helperMissing, helperMissingExports));
 
-var _if = {exports: {}};
+var _ifExports = {};
+var _if = {
+  get exports(){ return _ifExports; },
+  set exports(v){ _ifExports = v; },
+};
 
 (function (module, exports) {
 
@@ -1909,7 +1933,7 @@ var _if = {exports: {}};
 
 	var _utils = utils;
 
-	var _exception = exception.exports;
+	var _exception = exceptionExports;
 
 	var _exception2 = _interopRequireDefault(_exception);
 
@@ -1946,9 +1970,13 @@ var _if = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (_if, _if.exports));
+} (_if, _ifExports));
 
-var log$1 = {exports: {}};
+var logExports = {};
+var log$1 = {
+  get exports(){ return logExports; },
+  set exports(v){ logExports = v; },
+};
 
 (function (module, exports) {
 
@@ -1976,9 +2004,13 @@ var log$1 = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (log$1, log$1.exports));
+} (log$1, logExports));
 
-var lookup = {exports: {}};
+var lookupExports = {};
+var lookup = {
+  get exports(){ return lookupExports; },
+  set exports(v){ lookupExports = v; },
+};
 
 (function (module, exports) {
 
@@ -1996,9 +2028,13 @@ var lookup = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (lookup, lookup.exports));
+} (lookup, lookupExports));
 
-var _with = {exports: {}};
+var _withExports = {};
+var _with = {
+  get exports(){ return _withExports; },
+  set exports(v){ _withExports = v; },
+};
 
 (function (module, exports) {
 
@@ -2009,7 +2045,7 @@ var _with = {exports: {}};
 
 	var _utils = utils;
 
-	var _exception = exception.exports;
+	var _exception = exceptionExports;
 
 	var _exception2 = _interopRequireDefault(_exception);
 
@@ -2043,7 +2079,7 @@ var _with = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (_with, _with.exports));
+} (_with, _withExports));
 
 helpers.__esModule = true;
 helpers.registerDefaultHelpers = registerDefaultHelpers;
@@ -2052,31 +2088,31 @@ helpers.moveHelperToHooks = moveHelperToHooks;
 
 function _interopRequireDefault$3(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _helpersBlockHelperMissing = blockHelperMissing.exports;
+var _helpersBlockHelperMissing = blockHelperMissingExports;
 
 var _helpersBlockHelperMissing2 = _interopRequireDefault$3(_helpersBlockHelperMissing);
 
-var _helpersEach = each.exports;
+var _helpersEach = eachExports;
 
 var _helpersEach2 = _interopRequireDefault$3(_helpersEach);
 
-var _helpersHelperMissing = helperMissing.exports;
+var _helpersHelperMissing = helperMissingExports;
 
 var _helpersHelperMissing2 = _interopRequireDefault$3(_helpersHelperMissing);
 
-var _helpersIf = _if.exports;
+var _helpersIf = _ifExports;
 
 var _helpersIf2 = _interopRequireDefault$3(_helpersIf);
 
-var _helpersLog = log$1.exports;
+var _helpersLog = logExports;
 
 var _helpersLog2 = _interopRequireDefault$3(_helpersLog);
 
-var _helpersLookup = lookup.exports;
+var _helpersLookup = lookupExports;
 
 var _helpersLookup2 = _interopRequireDefault$3(_helpersLookup);
 
-var _helpersWith = _with.exports;
+var _helpersWith = _withExports;
 
 var _helpersWith2 = _interopRequireDefault$3(_helpersWith);
 
@@ -2101,7 +2137,11 @@ function moveHelperToHooks(instance, helperName, keepHelper) {
 
 var decorators = {};
 
-var inline = {exports: {}};
+var inlineExports = {};
+var inline = {
+  get exports(){ return inlineExports; },
+  set exports(v){ inlineExports = v; },
+};
 
 (function (module, exports) {
 
@@ -2132,7 +2172,7 @@ var inline = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (inline, inline.exports));
+} (inline, inlineExports));
 
 decorators.__esModule = true;
 decorators.registerDefaultDecorators = registerDefaultDecorators;
@@ -2140,7 +2180,7 @@ decorators.registerDefaultDecorators = registerDefaultDecorators;
 
 function _interopRequireDefault$2(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _decoratorsInline = inline.exports;
+var _decoratorsInline = inlineExports;
 
 var _decoratorsInline2 = _interopRequireDefault$2(_decoratorsInline);
 
@@ -2148,7 +2188,11 @@ function registerDefaultDecorators(instance) {
   _decoratorsInline2['default'](instance);
 }
 
-var logger$1 = {exports: {}};
+var loggerExports = {};
+var logger$1 = {
+  get exports(){ return loggerExports; },
+  set exports(v){ loggerExports = v; },
+};
 
 (function (module, exports) {
 
@@ -2197,7 +2241,7 @@ var logger$1 = {exports: {}};
 	exports['default'] = logger;
 	module.exports = exports['default'];
 	
-} (logger$1, logger$1.exports));
+} (logger$1, loggerExports));
 
 var protoAccess = {};
 
@@ -2233,7 +2277,7 @@ function _interopRequireWildcard$1(obj) { if (obj && obj.__esModule) { return ob
 
 var _createNewLookupObject = createNewLookupObject$1;
 
-var _logger$1 = logger$1.exports;
+var _logger$1 = loggerExports;
 
 var logger = _interopRequireWildcard$1(_logger$1);
 
@@ -2302,7 +2346,7 @@ function _interopRequireDefault$1(obj) { return obj && obj.__esModule ? obj : { 
 
 var _utils$1 = utils;
 
-var _exception$1 = exception.exports;
+var _exception$1 = exceptionExports;
 
 var _exception2$1 = _interopRequireDefault$1(_exception$1);
 
@@ -2310,7 +2354,7 @@ var _helpers$1 = helpers;
 
 var _decorators = decorators;
 
-var _logger = logger$1.exports;
+var _logger = loggerExports;
 
 var _logger2 = _interopRequireDefault$1(_logger);
 
@@ -2408,7 +2452,11 @@ base.log = log;
 base.createFrame = _utils$1.createFrame;
 base.logger = _logger2['default'];
 
-var safeString = {exports: {}};
+var safeStringExports = {};
+var safeString = {
+  get exports(){ return safeStringExports; },
+  set exports(v){ safeStringExports = v; },
+};
 
 (function (module, exports) {
 
@@ -2424,7 +2472,7 @@ var safeString = {exports: {}};
 	exports['default'] = SafeString;
 	module.exports = exports['default'];
 	
-} (safeString, safeString.exports));
+} (safeString, safeStringExports));
 
 var runtime$1 = {};
 
@@ -2466,7 +2514,7 @@ var _utils = utils;
 
 var Utils = _interopRequireWildcard(_utils);
 
-var _exception = exception.exports;
+var _exception = exceptionExports;
 
 var _exception2 = _interopRequireDefault(_exception);
 
@@ -2817,7 +2865,11 @@ function passLookupPropertyOption(helper, container) {
   });
 }
 
-var noConflict = {exports: {}};
+var noConflictExports = {};
+var noConflict = {
+  get exports(){ return noConflictExports; },
+  set exports(v){ noConflictExports = v; },
+};
 
 (function (module, exports) {
 
@@ -2838,7 +2890,7 @@ var noConflict = {exports: {}};
 
 	module.exports = exports['default'];
 	
-} (noConflict, noConflict.exports));
+} (noConflict, noConflictExports));
 
 (function (module, exports) {
 
@@ -2858,11 +2910,11 @@ var noConflict = {exports: {}};
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
 
-	var _handlebarsSafeString = safeString.exports;
+	var _handlebarsSafeString = safeStringExports;
 
 	var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 
-	var _handlebarsException = exception.exports;
+	var _handlebarsException = exceptionExports;
 
 	var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 
@@ -2874,7 +2926,7 @@ var noConflict = {exports: {}};
 
 	var runtime = _interopRequireWildcard(_handlebarsRuntime);
 
-	var _handlebarsNoConflict = noConflict.exports;
+	var _handlebarsNoConflict = noConflictExports;
 
 	var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 
@@ -2906,11 +2958,11 @@ var noConflict = {exports: {}};
 	exports['default'] = inst;
 	module.exports = exports['default'];
 	
-} (handlebars_runtime, handlebars_runtime.exports));
+} (handlebars_runtime, handlebars_runtimeExports));
 
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
-var runtime = handlebars_runtime.exports['default'];
+var runtime = handlebars_runtimeExports['default'];
 
 var templateClient = {"1":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
