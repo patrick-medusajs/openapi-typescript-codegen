@@ -38,7 +38,109 @@ export const writeClientIndex = async (
     postfixModels: string,
     clientName?: string
 ): Promise<void> => {
-    const templateResult = templates.index({
+    const templateResult = templates.indexes.index({
+        exportCore,
+        exportServices,
+        exportModels,
+        exportHooks,
+        exportSchemas,
+        useUnionTypes,
+        postfixServices,
+        postfixModels,
+        clientName,
+        server: client.server,
+        version: client.version,
+        models: sortModelsByName(client.models),
+        services: sortServicesByName(client.services),
+        exportClient: isDefined(clientName),
+    });
+
+    await writeFile(resolve(outputPath, 'index.ts'), templateResult);
+};
+
+export const writeClientIndexModels = async (
+    client: Client,
+    templates: Templates,
+    outputPath: string,
+    useUnionTypes: boolean,
+    exportCore: boolean,
+    exportServices: boolean,
+    exportModels: boolean,
+    exportHooks: boolean,
+    exportSchemas: boolean,
+    postfixServices: string,
+    postfixModels: string,
+    clientName?: string
+): Promise<void> => {
+    const templateResult = templates.indexes.indexModels({
+        exportCore,
+        exportServices,
+        exportModels,
+        exportHooks,
+        exportSchemas,
+        useUnionTypes,
+        postfixServices,
+        postfixModels,
+        clientName,
+        server: client.server,
+        version: client.version,
+        models: sortModelsByName(client.models),
+        services: sortServicesByName(client.services),
+        exportClient: isDefined(clientName),
+    });
+
+    await writeFile(resolve(outputPath, 'index.ts'), templateResult);
+};
+
+export const writeClientIndexServices = async (
+    client: Client,
+    templates: Templates,
+    outputPath: string,
+    useUnionTypes: boolean,
+    exportCore: boolean,
+    exportServices: boolean,
+    exportModels: boolean,
+    exportHooks: boolean,
+    exportSchemas: boolean,
+    postfixServices: string,
+    postfixModels: string,
+    clientName?: string
+): Promise<void> => {
+    const templateResult = templates.indexes.indexServices({
+        exportCore,
+        exportServices,
+        exportModels,
+        exportHooks,
+        exportSchemas,
+        useUnionTypes,
+        postfixServices,
+        postfixModels,
+        clientName,
+        server: client.server,
+        version: client.version,
+        models: sortModelsByName(client.models),
+        services: sortServicesByName(client.services),
+        exportClient: isDefined(clientName),
+    });
+
+    await writeFile(resolve(outputPath, 'index.ts'), templateResult);
+};
+
+export const writeClientIndexHooks = async (
+    client: Client,
+    templates: Templates,
+    outputPath: string,
+    useUnionTypes: boolean,
+    exportCore: boolean,
+    exportServices: boolean,
+    exportModels: boolean,
+    exportHooks: boolean,
+    exportSchemas: boolean,
+    postfixServices: string,
+    postfixModels: string,
+    clientName?: string
+): Promise<void> => {
+    const templateResult = templates.indexes.indexHooks({
         exportCore,
         exportServices,
         exportModels,

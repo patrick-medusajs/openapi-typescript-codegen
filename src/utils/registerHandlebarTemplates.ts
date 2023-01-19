@@ -52,7 +52,10 @@ import templateExportModel from '../templates/exportModel.hbs';
 import templateExportSchema from '../templates/exportSchema.hbs';
 import templateExportService from '../templates/exportService.hbs';
 import templateExportHook from '../templates/exportHook.hbs';
-import templateIndex from '../templates/index.hbs';
+import templateIndex from '../templates/indexes/index.hbs';
+import templateIndexModels from '../templates/indexes/indexModels.hbs';
+import templateIndexServices from '../templates/indexes/indexServices.hbs';
+import templateIndexHooks from '../templates/indexes/indexHooks.hbs';
 import partialBase from '../templates/partials/base.hbs';
 import partialExportComposition from '../templates/partials/exportComposition.hbs';
 import partialExportEnum from '../templates/partials/exportEnum.hbs';
@@ -84,7 +87,12 @@ import partialTypeUnion from '../templates/partials/typeUnion.hbs';
 import { registerHandlebarHelpers } from './registerHandlebarHelpers';
 
 export interface Templates {
-    index: Handlebars.TemplateDelegate;
+    indexes: {
+        index: Handlebars.TemplateDelegate;
+        indexModels: Handlebars.TemplateDelegate;
+        indexServices: Handlebars.TemplateDelegate;
+        indexHooks: Handlebars.TemplateDelegate;
+    };
     client: Handlebars.TemplateDelegate;
     useClient: Handlebars.TemplateDelegate;
     exports: {
@@ -119,7 +127,12 @@ export const registerHandlebarTemplates = (root: {
 
     // Main templates (entry points for the files we write to disk)
     const templates: Templates = {
-        index: Handlebars.template(templateIndex),
+        indexes: {
+            index: Handlebars.template(templateIndex),
+            indexModels: Handlebars.template(templateIndexModels),
+            indexServices: Handlebars.template(templateIndexServices),
+            indexHooks: Handlebars.template(templateIndexHooks),
+        },
         client: Handlebars.template(templateClient),
         useClient: Handlebars.template(templateUseClient),
         exports: {

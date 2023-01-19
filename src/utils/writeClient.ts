@@ -10,7 +10,12 @@ import type { Templates } from './registerHandlebarTemplates';
 import { writeClientClass } from './writeClientClass';
 import { writeClientCore } from './writeClientCore';
 import { writeClientHooks } from './writeClientHooks';
-import { writeClientIndex } from './writeClientIndex';
+import {
+    writeClientIndex,
+    writeClientIndexHooks,
+    writeClientIndexModels,
+    writeClientIndexServices,
+} from './writeClientIndex';
 import { writeClientModels } from './writeClientModels';
 import { writeClientSchemas } from './writeClientSchemas';
 import { writeClientServices } from './writeClientServices';
@@ -85,6 +90,20 @@ export const writeClient = async (
             postfixServices,
             clientName
         );
+        await writeClientIndexServices(
+            client,
+            templates,
+            outputPathServices,
+            useUnionTypes,
+            exportCore,
+            exportServices,
+            exportModels,
+            exportHooks,
+            exportSchemas,
+            postfixServices,
+            postfixModels,
+            clientName
+        );
     }
 
     if (exportHooks) {
@@ -101,6 +120,20 @@ export const writeClient = async (
             postfixServices,
             clientName
         );
+        await writeClientIndexHooks(
+            client,
+            templates,
+            outputPathHooks,
+            useUnionTypes,
+            exportCore,
+            exportServices,
+            exportModels,
+            exportHooks,
+            exportSchemas,
+            postfixServices,
+            postfixModels,
+            clientName
+        );
     }
 
     if (exportSchemas) {
@@ -113,6 +146,20 @@ export const writeClient = async (
         await rmdir(outputPathModels);
         await mkdir(outputPathModels);
         await writeClientModels(client.models, templates, outputPathModels, httpClient, useUnionTypes, indent);
+        await writeClientIndexModels(
+            client,
+            templates,
+            outputPathModels,
+            useUnionTypes,
+            exportCore,
+            exportServices,
+            exportModels,
+            exportHooks,
+            exportSchemas,
+            postfixServices,
+            postfixModels,
+            clientName
+        );
     }
 
     if (isDefined(clientName)) {

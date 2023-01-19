@@ -1,7 +1,12 @@
 import { Templates } from '../registerHandlebarTemplates';
 
 export const templates: Templates = {
-    index: () => 'index',
+    indexes: {
+        index: () => 'index',
+        indexModels: () => 'indexModels',
+        indexServices: () => 'indexServices',
+        indexHooks: () => 'indexHooks',
+    },
     client: () => 'client',
     useClient: () => 'useClient',
     exports: {
