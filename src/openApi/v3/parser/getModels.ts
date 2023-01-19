@@ -67,11 +67,11 @@ export const getModels = (openApi: OpenApi): Model[] => {
 };
 
 const getDefinitionFromParametersQuery = (parametersQuery: OperationParameter[]): OpenApiSchema => {
-    const required = parametersQuery.filter(parameter => parameter.spec.required).map(parameter => parameter.name);
+    const required = parametersQuery.filter(parameter => parameter.spec.required).map(parameter => parameter.prop);
     const properties: Dictionary<OpenApiSchema> = {};
     for (const parameter of parametersQuery) {
         const spec = parameter.spec as OpenApiParameter;
-        properties[parameter.name] = Object.assign(
+        properties[parameter.prop] = Object.assign(
             { ...spec.schema },
             {
                 description: spec.description,

@@ -79,7 +79,7 @@ export class {{{name}}}{{{@root.postfix}}} {
 			{{#if parametersQuery}}
 			query: {
 				{{#each parametersQuery}}
-				'{{{prop}}}': queryParams.{{{name}}},
+				'{{{prop}}}': queryParams.{{{prop}}},
 				{{/each}}
 			},
 			{{/if}}
