@@ -9,6 +9,8 @@ import { use{{{pascalCase clientName}}} } from '../use{{pascalCase clientName}}'
 	{{/each}}
 {{/if}}
 
+const { client } = use{{{pascalCase clientName}}}()
+
 {{#each operations}}
 	export const use{{{service}}}{{{pascalCase name}}} = (
 		{{~#if parameters}}{{~>parameters~}},{{/if}}
@@ -20,7 +22,6 @@ import { use{{{pascalCase clientName}}} } from '../use{{pascalCase clientName}}'
 			> = {}
 		{{/equals}}
 	) => {
-		const { client } = use{{{pascalCase ../clientName}}}()
 		{{#equals method 'GET'}}
 			const { data, ...rest } = useQuery<Awaited<ReturnType<typeof client.{{camelCase service}}.{{name}}>>>(
 				['{{camelCase service}}', '{{ camelCase name }}'{{#if parameters}}, {{>parametersUntyped}}{{/if}}],

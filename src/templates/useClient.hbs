@@ -1,5 +1,6 @@
 {{>header}}
 
+import React from 'react';
 import { createContext, useContext, ReactNode } from 'react';
 import { QueryClientProvider, QueryClientProviderProps } from 'react-query';
 import { {{{clientName}}} } from './{{{clientName}}}';
@@ -35,8 +36,8 @@ interface {{{pascalCase clientName}}}ProviderProps {
 export const {{{pascalCase clientName}}}Provider = ({
 	queryClientProviderProps,
 	baseUrl,
-	apiKey,
-	publishableApiKey,
+	{{!-- apiKey,
+	publishableApiKey,--}}
 	children,
 }: {{{pascalCase clientName}}}ProviderProps) => {
 	const client = new {{{clientName}}}({
