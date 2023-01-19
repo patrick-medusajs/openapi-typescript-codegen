@@ -1,4 +1,4 @@
-import { flatMap } from './flatMap';
+import { flatMap } from '../flatMap';
 
 describe('flatMap', () => {
     it('should produce correct result', () => {

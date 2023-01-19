@@ -1,7 +1,7 @@
-import type { Model } from '../client/interfaces/Model';
-import { getModelNames } from './getModelNames';
+import type { Model } from '../../client/interfaces/Model';
+import { sortModelsByName } from '../sortModelsByName';
 
-describe('getModelNames', () => {
+describe('sortModelsByName', () => {
     it('should return sorted list', () => {
         const john: Model = {
             spec: {},
@@ -59,7 +59,7 @@ describe('getModelNames', () => {
         };
         const models: Model[] = [john, jane, doe];
 
-        expect(getModelNames([])).toEqual([]);
-        expect(getModelNames(models)).toEqual(['Doe', 'Jane', 'John']);
+        expect(sortModelsByName([])).toEqual([]);
+        expect(sortModelsByName(models)).toEqual([doe, jane, john]);
     });
 });

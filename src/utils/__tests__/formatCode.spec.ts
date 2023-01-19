@@ -1,4 +1,4 @@
-import { formatCode } from './formatCode';
+import { formatCode } from '../formatCode';
 
 const input1 = `{ foo: true }`;
 

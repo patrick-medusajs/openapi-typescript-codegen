@@ -1,4 +1,4 @@
-import { getOpenApiVersion } from './getOpenApiVersion';
+import { getOpenApiVersion } from '../getOpenApiVersion';
 
 describe('getOpenApiVersion', () => {
     it('should read the correct version', () => {

@@ -1,5 +1,5 @@
-import { HttpClient } from '../HttpClient';
-import { registerHandlebarTemplates } from './registerHandlebarTemplates';
+import { HttpClient } from '../../HttpClient';
+import { registerHandlebarTemplates } from '../registerHandlebarTemplates';
 
 describe('registerHandlebarTemplates', () => {
     it('should return correct templates', () => {
@@ -8,7 +8,8 @@ describe('registerHandlebarTemplates', () => {
             useOptions: false,
             useUnionTypes: false,
         });
-        expect(templates.index).toBeDefined();
+        expect(templates.indexes.index).toBeDefined();
+        expect(templates.indexes.indexModels).toBeDefined();
         expect(templates.exports.model).toBeDefined();
         expect(templates.exports.schema).toBeDefined();
         expect(templates.exports.service).toBeDefined();
